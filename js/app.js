@@ -3,238 +3,242 @@
 // To INCLUDE jsonFlickrApi wrapper
 // jsoncallback=? 
 
-var flickr_id_array = [];
-var flickr_title_array = [];
+//let flickr_id_array = [];
+//let flickr_title_array = [];
 
-var winWidth = window.innerWidth;
+// Add the navigation to the DOM.
+// This placement is calculated based on the viewport.
+placeArrows();
 
-var flickrImageSize = 0;
+// The ID of the gallery, which at some point won't be hard coded
+const photoset_id = '72157632825799227';
+//const photoset_id = '72157686731900515';
 
-// Set request resolution for flickr request
-if (winWidth < 320) {
-    flickrImageSize = 3;
-} else if (winWidth < 500) {
-    flickrImageSize = 4;
-} else if (winWidth < 640) {
-    flickrImageSize = 5;
-} else if (winWidth < 800) {
-    flickrImageSize = 6;
-} else if (winWidth < 1024) {
-    flickrImageSize = 7;
-} else if (winWidth < 1440) {
-    flickrImageSize = 8;
-} else if (winWidth < 1920) {
-    flickrImageSize = 9;
-} else {
-    flickrImageSize = 2;
-}
-
-// Debugging
-// console.log('winWidth: ' + winWidth);
-// console.log('flickrImageSize: ' + flickrImageSize);
+// The current screen resolution
+const viewport_width = window.innerWidth;
 
 // Set API path
-var api = 'https://api.flickr.com/services/rest/';
+const api = 'https://api.flickr.com/services/rest/';
 
 // Provide API key
-var api_key = '7ec3fd13ea8480e8a098bd82a474723a';
+const api_key = '7ec3fd13ea8480e8a098bd82a474723a';
 
-// Place arrows on INITIAL images load
-// Should we worry about subsequent images?
-function placeArrows() {
-    // Place arrow navigation
-    var arrowHeight = $('nav a').height(),
-        arrowBound = parseInt($('h1').height()) + parseInt($('figure').height());
-    $('nav a').css('top', (arrowBound / 2) + 'px');
-}
+// API request URL for an individual photo
+// https://www.flickr.com/services/api/flickr.photos.getSizes.html
+const url_onephoto =  `${api}?method=flickr.photos.getSizes&api_key=${api_key}&format=json&jsoncallback=?&photo_id=`;
 
-// Display the gallery title
-function gallery_title(ajax_data) {
-    if (ajax_data.photoset.title) {
-        $('h1').text(ajax_data.photoset.title);
-    } else {
-        $('h1').text('Album Title Missing');
-    }
-}
+// API request URL for all photo sin the gallery
+// https://www.flickr.com/services/api/flickr.photosets.getPhotos.html
+const url_allphotos = `${api}?method=flickr.photosets.getPhotos&api_key=${api_key}&photoset_id=${photoset_id}&format=json&jsoncallback=?`;
 
+// Run when DOM is ready
+$(document).ready(function () {
 
-var requestImageSimple = function (id, altText) {
+    getGalleryMembers(function(output){
 
-    $.ajax({
-        url: api + '?method=flickr.photos.getSizes&api_key=' + api_key + '&photo_id=' + id + '&format=json&jsoncallback=?',
-        type: "GET",
-        cache: true,
-        dataType: 'jsonp',
-        async: true,
-        success: function (data) {
+        // The integer of the last index in the photos array
+        let last_index_value = output.length;
 
-            // Create a new image object
-            var img =  new Image();
-            $(img).attr({
-                src: data.sizes.size[flickrImageSize].source,
-                alt: altText
-            });
-
-            // Add these to the UI
-            $('figure').append(img);
-
-        },
-        error: function () {
-            console.log('Image was not retrieved.');
-        }
-    });
-};
-
-
-// Get the individual image
-// This is the current problem in that images
-// are not being downloaded sequntially.
-// please test as async = false
-var requestImage = function (id, altText, callback, isFirst) {
-
-    $.ajax({
-        url: api + '?method=flickr.photos.getSizes&api_key=' + api_key + '&photo_id=' + id + '&format=json&jsoncallback=?',
-        type: "GET",
-        cache: true,
-        dataType: 'jsonp',
-        async: true,
-        success: function (data) {
-
-            // Create a new image object
-            var img =  new Image();
-            $(img).attr({
-                src: data.sizes.size[flickrImageSize].source,
-                alt: altText
-            });
-
-            // Add these to the UI
-            $('figure').append(img);
-            $('figcaption').text(altText);
-
-            //console.log(img);
-
-            // If is the first image, run the callback function 
-            // that loads the rest of the images
-            if (isFirst) {
-                $(img).load(function () {
-                    console.log('image has loaded');
-                    $(this).addClass('active');
-                    placeArrows();
-                    callback();
-                });
-            }
-
-        },
-        error: function () {
-            console.log('Image was not retrieved.');
-        }
-    });
-};
-
-// Once the image data has been determined,
-// requested the correct resolution from the server
-function handlePhotosArray(photos) {
-
-    // id, altText, callback, isFirst
-    requestImage(photos[0][0], photos[0][1], function () {
-        console.log('callback called');
-        $.each(photos, function (i, obj) {
-            console.log(obj[0] + ', ' + obj[1]);
-            
-            setTimeout(function(){ 
-                requestImage(obj[0], obj[1], false);
-            }, 6000);
-            
-            
+        // Loop through the created gallery photo array
+        $.each(output, function (index, item) {
+            // Add the slide containers, which in this case are figures and figcaptions
+            addFigures(item[0],item[1])
         });
-    }, true);
 
-}
+        $("figure:first").addClass("active");
 
+        // Populate first two images
+        requestImage(output[0][0],output[0][1]);
+        requestImage(output[1][0],output[1][1]);
+
+        // Pass the array's length to the navigation function
+        navigation(last_index_value);
+
+    });
+
+});
+
+// This is up for grabs now
 function navigation(total) {
 
-    $('#next').on('click', function (e) {
+    // Phase 2 enhancement is adding keypress support
 
-    e.preventDefault();
-
-    // Determine the next image on the list
-    var next_index = ($('img.active').index());
-
-    console.log(next_index);
-
-    // Remove all class instances
-    $('img').removeClass('active');
-
-    // If the active image is the last in the sequence
-    if (next_index > total) { next_index = 0; }
-
-    // Activate the next image
-    $('img:eq(' + next_index + ')').addClass('active');
-
-    // Write the caption
-    // next = next + 1;
-    //$('figcaption').text(flickr_title_array[next]);
-    // Write the caption
-    //$('figcaption').text(flickr_title_array[next_index]);
-
-    });
-    
-    
-    $('#prev').on('click', function (e) {
+    $("nav a").on("click", function (e) {
         e.preventDefault();
 
-        if ($('img').length === 1) { return; }
+        // The element
+        let element = $("figure");
 
-        var prev_index = ($('img.active').index()) - 1;
+        // The index of the currently active element
+        let active_element_index = $("figure.active").index();
 
-        // Using 3 for testing only
-        if (prev_index === -1) { prev_index = (photo_total - 1); }
+        // Default to the action for the left (previous) navigation element
+        let increment_value = -1;
 
-        console.log('prev_index: ' + prev_index);
+        // If the "next" link is clicked, change the increment value
+        if ("next" == $(this).attr("id")) {
+            increment_value = 1;
 
-        // Write the caption
-        $('figcaption').text(flickr_title_array[prev_index]);
+            // Load Images **************** //
 
-        // Move the class backward
-        $('img').removeClass('active');
-        $('img:eq(' + prev_index + ')').addClass('active');
+            // Total of already loaded images
+            let loaded_image_total = $("figure img").length;
+
+            // Since two images are initially loaded, the next image to load
+            // is two ahead of the currently active slide.
+            // This is to make a smooth and responsive UI
+            let next_image_index = active_element_index + 2;
+
+            // Set values for the eventual image request
+            let preload_id = element.eq(next_image_index).attr("id");
+            let preload_alt = element.eq(next_image_index).children("figcaption").text();
+
+            // Load an image unless all images are already loaded
+            if (loaded_image_total != total){
+                requestImage(preload_id, preload_alt);
+            } else {
+                console.log("All images have loaded.");
+            }
+
+        }
+
+        // The next or previous element in the sequence to make active
+        let active_index = active_element_index + increment_value;
+
+        // Clear classes to start over
+        element.removeClass('active');
+
+        // If the active element is at then, activate the first element
+        if (active_index === total) {
+            element.eq(0).addClass("active");
+        } else {
+            element.eq(active_index).addClass("active");
+        }
 
     });
-    
+
 }
 
-$(document).ready(function () {
-    
-    // Get gallery title and photos
-    // Why jsonp?
+// Just returns the data from the initial request do that it can be used else where.
+// This is just a proof of concept function.
+// What we really want to do is request in the individual photo's data based on the ID from the initial request.
+function handleData(){}
+
+// Process the data externally by passing in a callback function
+function getGalleryMembers(handleData) {
     $.ajax({
-        url: api + '?method=flickr.photosets.getPhotos&api_key=' + api_key + '&photoset_id=72157686731900515&format=json&jsoncallback=?',
+        url: url_allphotos,
         type: 'GET',
         cache: true,
         dataType: 'jsonp',
-        async: true,
+        async: false,
         success: function (data) {
-            gallery_title(data);
-            
-            var photosArray = [];
-            
+
+            // Display the gallery title
+            galleryTitle(data.photoset.title);
+
+            // Instantiate the photos array
+            let photosArray = [];
+
+            // Iterate over the response and create a simplified array
             $.each(data.photoset.photo, function (i, obj) {
                 photosArray.push([obj.id, obj.title]);
-                //console.log(obj.title);
             });
-            
-            console.log(photosArray.length);
-            
-            navigation(photosArray.length);
-            
-            handlePhotosArray(photosArray);
+
+            // Pass the new array to the callback function;
+            handleData(photosArray);
         },
         error: function () {
             console.log('Getting gallery photos has failed.');
         }
     });
-    
-});
+}
 
+// Get the individual image from the getSizes method
+// id - the id of the image
+// altText - the alternative text of the image
+function requestImage (id, altText) {
 
-$(window).on('load', function () {});
+    // Debug
+    //d = new Date();
+    //console.log("requestImage called. " + d.getTime());
+
+    $.ajax({
+        url: url_onephoto + id,
+        type: "GET",
+        cache: true,
+        dataType: "jsonp", // why?
+        async: false,
+        success: function (data) {
+
+            // Instantiate the size array
+            let sizes_array = [];
+
+            // Create a new image object
+            let img = new Image();
+
+            // The index of the sizes array to get the path from
+            let size_index = 0;
+
+            // Push the available widths into the array for comparison
+            $.each(data.sizes.size, function (i, obj) {
+                //console.log(obj.width);
+                sizes_array.push(obj.width);
+            });
+
+            // Find the closest value in the array to the viewpots width.
+            // This will determine which image size we request.
+            const output = sizes_array.reduce(
+                (prev, curr) => Math.abs(curr - viewport_width) < Math.abs(prev - viewport_width) ? curr : prev
+            );
+
+            // Get the index of the chosen resolution in order to choose the right image source.
+            $.each(data.sizes.size, function (i, obj) {
+                if (output === obj.width) {
+                    size_index = i;
+                }
+            });
+
+            // Add attributes to the image object
+            $(img).attr({
+                src: data.sizes.size[size_index].source,
+                alt: altText
+            });
+
+            // Append the element in the proper ID location
+            $("figure#" + id).append(img);
+
+        },
+        error: function () {
+            console.log('Data was not retrieved.');
+        }
+    });
+}
+
+// Add the figures into the DOM, loaded with the IDs and captions from the initial API request
+// imageid = The individual photo ID
+// captiontext = The individual photo caption text
+function addFigures (imageid, captiontext) {
+    let $figcaption = $("<figcaption>").text(captiontext);
+    let $figure = $("<figure>", {id: imageid}).append($figcaption);
+    $("#gallery").append($figure);
+}
+
+// Place arrows on INITIAL images load
+// Should we worry about subsequent images, i.e. be calculated each time?
+function placeArrows() {
+    // Place arrow navigation
+    let viewportheight = window.innerHeight;
+    let controloffset = $("#next").height();
+    let arrowposition = ((viewportheight / 2) - controloffset) + "px";
+    $('nav a').css('top', arrowposition);
+}
+
+// Display the gallery title
+function galleryTitle(title) {
+    if (title) {
+        $('h1').text(title);
+    } else {
+        $('h1').text('Album Title Missing');
+    }
+}
