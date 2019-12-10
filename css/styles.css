@@ -1,7 +1,7 @@
 body {
     margin: 0;
-    font-family: sans-serif;
-    background-color: #000000;    
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background-color: #000000;
 }
 
 figcaption {
@@ -10,21 +10,26 @@ figcaption {
 }
 
 figure {
-    border: 2px dashed aqua;
+    display: none;
+    border: 1px dashed aqua;
     margin: 0;
     position: relative;
-    background-color: #000000;
+    background-color: #444444;
+}
+figure.active {
+    display: block;
+    border: 1px dashed yellow;
+    transition-property: display;
+    transition-duration: 4s;
+    transition-delay: 2s;
 }
 figure img {
     width: 100%;
-    display: none;
-}
-figure img.active {
-    display: block;
 }
 
+
 h1 {
-    color: #FFF;
+    color: #f0f0f0;
     padding: 1rem;
     margin: 0;
 }
@@ -45,7 +50,7 @@ nav a {
     height: 1.25rem;
     padding: .5rem;    
     background-color: rgba(0,0,0,0.25);
-    position: absolute;
+    position: fixed;
     z-index: 1000;
 }
 nav a#next { 
