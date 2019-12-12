@@ -1,10 +1,12 @@
+/*jshint esversion: 6:true*/
+
 // To EXCLUDE jsonFlickrApi wrapper
 // nojsoncallback=1
 // To INCLUDE jsonFlickrApi wrapper
 // jsoncallback=? 
 
-//let flickr_id_array = [];
-//let flickr_title_array = [];
+(function () {
+    'use strict';
 
 // Add the navigation to the DOM.
 // This placement is calculated based on the viewport.
@@ -42,7 +44,7 @@ $(document).ready(function () {
         // Loop through the created gallery photo array
         $.each(output, function (index, item) {
             // Add the slide containers, which in this case are figures and figcaptions
-            addFigures(item[0],item[1])
+            addFigures(item[0],item[1]);
         });
 
         $("figure:first").addClass("active");
@@ -53,12 +55,12 @@ $(document).ready(function () {
 
         // Pass the array's length to the navigation function
         navigation(last_index_value);
-
     });
 
 });
 
-// This is up for grabs now
+// Navigate through the slides, preloading images along the way
+// Needs enhancement of keypress
 function navigation(total) {
 
     // Phase 2 enhancement is adding keypress support
@@ -75,8 +77,9 @@ function navigation(total) {
         // Default to the action for the left (previous) navigation element
         let increment_value = -1;
 
+        // START HERE
         // If the "next" link is clicked, change the increment value
-        if ("next" == $(this).attr("id")) {
+        if ("next" === $(this).attr("id")) {
             increment_value = 1;
 
             // Load Images **************** //
@@ -94,7 +97,7 @@ function navigation(total) {
             let preload_alt = element.eq(next_image_index).children("figcaption").text();
 
             // Load an image unless all images are already loaded
-            if (loaded_image_total != total){
+            if (loaded_image_total !== total){
                 requestImage(preload_id, preload_alt);
             } else {
                 console.log("All images have loaded.");
@@ -106,13 +109,13 @@ function navigation(total) {
         let active_index = active_element_index + increment_value;
 
         // Clear classes to start over
-        element.removeClass('active');
+        element.removeClass('active').fadeOut();
 
         // If the active element is at then, activate the first element
         if (active_index === total) {
-            element.eq(0).addClass("active");
+            element.eq(0).addClass("active").fadeIn();
         } else {
-            element.eq(active_index).addClass("active");
+            element.eq(active_index).addClass("active").fadeIn();
         }
 
     });
@@ -242,3 +245,5 @@ function galleryTitle(title) {
         $('h1').text('Album Title Missing');
     }
 }
+
+}());
