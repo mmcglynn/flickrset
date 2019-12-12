@@ -1,4 +1,7 @@
-/*jslint es6:true*/
+/*jshint esversion: 6:true*/
+
+(function () {
+    'use strict';
 
 // The ID of the gallery, which at some point won't be hard coded
 const photoset_id = '72157686731900515';
@@ -51,3 +54,4 @@ req.onload  = function() {
 };
 req.send(null);
 
+}());
