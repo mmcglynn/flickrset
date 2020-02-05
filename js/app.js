@@ -6,13 +6,8 @@
 (function () {
     "use strict";
 
-    // Add the navigation to the DOM.
-    // This placement is calculated based on the viewport.
-    placeArrows();
-
-    // The ID of the gallery, which at some point won't be hard coded
-    const photoset_id = "72157632825799227";
-    //const photoset_id = '72157686731900515';
+    // Pull the ID out of the URL. This needs work to define behavior for missing ID.
+    const photoset_id = getPhotosetID();
 
     // The current screen resolution
     const viewport_width = window.innerWidth;
@@ -27,14 +22,21 @@
     // https://www.flickr.com/services/api/flickr.photos.getSizes.html
     const url_onephoto = `${api}?method=flickr.photos.getSizes&api_key=${api_key}&format=json&jsoncallback=?&photo_id=`;
 
-    // API request URL for all photo sin the gallery
+    // API request URL for all photos in the gallery
     // https://www.flickr.com/services/api/flickr.photosets.getPhotos.html
     const url_allphotos = `${api}?method=flickr.photosets.getPhotos&api_key=${api_key}&photoset_id=${photoset_id}&format=json&jsoncallback=?`;
+
+    // API request URL for all photos in the gallery
+    // https://www.flickr.com/services/api/flickr.photosets.getList.html
+    // https://www.flickr.com/services/rest/?method=flickr.photosets.getList&api_key=7ec3fd13ea8480e8a098bd82a474723a&user_id=8110271%40N05&format=json
+
+
+    window.onresize = placeArrows;
 
     // Run when DOM is ready
     $(document).ready(function () {
 
-        getGalleryMembers(function(output){
+        requestGalleryMembers(function(output){
 
             // The integer of the last index in the photos array
             let last_index_value = output.length;
@@ -45,20 +47,20 @@
                 addFigures(item[0],item[1]);
             });
 
+            setTimeout(function(){
+                placeArrows()
+            }, 500);
+
+            // Because all figures are initally set to inactive, set the first one to active
             $("figure:first").removeClass("inactive").addClass("active");
 
-            // Populate first two images
+            // Populate the first two images
             requestImage(output[0][0],output[0][1]);
             requestImage(output[1][0],output[1][1]);
 
             // Pass the array's length to the navigation function
             navigation(last_index_value);
         });
-
-        $("h1").on("mouseover", function(){
-           this.hide();
-        });
-
     });
 
     // Navigate through the slides, preloading images along the way
@@ -70,24 +72,30 @@
         $("nav a").on("click", function (e) {
             e.preventDefault();
 
+            // Total of already loaded images. Default should be 2.
+            let loaded_image_total = document.getElementsByTagName("img").length;
+
+            // Display the PREV button that was hidden be default.
+            document.querySelector('#prev').style.display = "block";
+
             // The element
-            let element = $("figure");
+            let element = jQuery("figure");
 
             // The index of the currently active element
             let active_element_index = $("figure.active").index();
 
+            console.log("active_element_index: " + active_element_index);
+
             // Default to the action for the left (previous) navigation element
             let increment_value = -1;
 
-            // START HERE
+            // WE DON'T NEED A CONDITION HERE. THE IMAGES SHOULD BE LOADING ON EVERY CLICK
+            // NOT EVERY "NEXT" CLICK.
             // If the "next" link is clicked, change the increment value
-            if ("next" === $(this).attr("id")) {
+            if ($(this).attr("id") === "next") {
                 increment_value = 1;
 
                 // Load Images **************** //
-
-                // Total of already loaded images
-                let loaded_image_total = $("figure img").length;
 
                 // Since two images are initially loaded, the next image to load
                 // is two ahead of the currently active slide.
@@ -101,8 +109,6 @@
                 // Load an image unless all images are already loaded
                 if (loaded_image_total !== total){
                     requestImage(preload_id, preload_alt);
-                } else {
-                    console.log("All images have loaded.");
                 }
 
             }
@@ -124,17 +130,27 @@
                 element.eq(active_index).addClass("active").fadeIn();
             }
 
-        });
+            if(loaded_image_total !== total && active_element_index === 0 ) {
+                document.querySelector("#prev").style.display = "none";
+            }
 
+            // Obviously , this needs to be refined.
+            if($(".active").index() !== 0) {
+                //console.log("Boom, first slide!");
+                $("h1").addClass("variation");
+            } else {
+                $("h1").removeClass("variation");
+            }
+
+
+        });
     }
 
-    // Just returns the data from the initial request do that it can be used else where.
-    // This is just a proof of concept function.
-    // What we really want to do is request in the individual photo's data based on the ID from the initial request.
-    function handleData(){}
+    // Just returns the data from the initial request do that it can be used elsewhere.
+    //function handleData(){}
 
     // Process the data externally by passing in a callback function
-    function getGalleryMembers(handleData) {
+    function requestGalleryMembers(handleData) {
         $.ajax({
             url: url_allphotos,
             type: "GET",
@@ -158,7 +174,7 @@
                 handleData(photosArray);
             },
             error: function () {
-                console.log("Getting gallery photos has failed.");
+                console.log("Gallery request has failed.");
             }
         });
     }
@@ -233,7 +249,6 @@
                         id: imageid,
                         class: "inactive"
                         });
-
         figure.append(figcaption);
         $("#gallery").append(figure);
     }
@@ -242,10 +257,15 @@
     // Should we worry about subsequent images, i.e. be calculated each time?
     function placeArrows() {
         // Place arrow navigation
-        let viewportheight = window.innerHeight;
-        let controloffset = $("#next").height();
-        let arrowposition = ((viewportheight / 2) - controloffset) + "px";
+        let element = document.querySelector("figure");
+        let elementheight = element.offsetHeight;
+        let controloffset = document.getElementById("next").offsetHeight;
+        let arrowposition = ((elementheight - controloffset) / 2) + "px";
+        // Debug
+        //console.log("elementheight=" + elementheight + ", controloffset=" + controloffset + ", arrowposition=" + arrowposition);
+
         $("nav a").css("top", arrowposition);
+        $("nav").show();
     }
 
     // Display the gallery title
@@ -255,6 +275,29 @@
         } else {
             $("h1").text("Album Title Missing");
         }
+    }
+
+    function getPhotosetID() {
+
+        let id = "";
+
+        // Feature detection
+        if ("URLSearchParams" in window) {
+            // Get the URL
+            const url = new URL(window.location.href);
+            // Search the URL parameters
+            const params = new URLSearchParams(url.search);
+            // Check if the 'id' parameter exists
+            if(params.has("id")) {
+                // Get the id's value
+                id = url.searchParams.get("id");
+                //console.log(photoset_id);
+            }
+        } else {
+            // Need to have a better default.
+            id = "72157657718008461";
+        }
+        return id;
     }
 
 }());
