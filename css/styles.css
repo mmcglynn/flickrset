@@ -27,9 +27,11 @@ button {
 figcaption {
     color: #FFFFFF;
     font-size: .75rem;
-    padding: .5rem 0;
+    padding: .5rem;
     text-align: right;
-    background-color: aliceblue;
+    /*background-color: lightblue;*/
+    position: absolute;
+    bottom: 0;
 }
 
 figure {
@@ -48,10 +50,6 @@ figure img {
 h1 {
     color: #f0f0f0;
     font-size: 1.5rem;
-    padding: .25em .5em;
-    margin: 0;
-    background-color: chocolate;
-    position: relative;
 }
 
 h1.variation {
@@ -60,8 +58,23 @@ h1.variation {
     animation-fill-mode: forwards;
 }
 
+header {
+    display: flex;
+    background-color: cornflowerblue;
+    padding: 0 1rem 1rem;
+}
+header h1 {
+    flex-grow: 1;
+    background-color: bisque;
+}
+header p {
+    margin: 1.5rem 0 0;
+    background-color: darkseagreen;
+}
+
+/* Arrow navigation */
 nav {
-    display: none;
+    /*display: none;*/
 }
 nav a svg {
     width: 100%;
@@ -69,9 +82,6 @@ nav a svg {
 nav a svg path.fill {
     fill: rgba(240,240,240,0.5);
 }
-nav a:hover svg path.fill {
-    fill: rgba(255,255,255,0.75);
-} 
 nav a {
     display: block;
     list-style-type: none;
@@ -85,21 +95,44 @@ nav a {
 nav a:hover {
     background-color: rgba(0,0,0,1);
 }
+nav a:hover svg path.fill {
+    fill: rgba(255,255,255,0.75);
+}
 nav a#next { 
     right: 0;
-    /*border-radius: 1em 0 0 1em;*/
 }
 nav a#prev { 
     left: 0;
     display: none;
-    /*border-radius: 0 1em 1em 0;*/
 }
 
+/* Index page */
+section {
+    border: 1px solid red;
+    display: flex;
+    flex-wrap: wrap;
+}
+section article {
+    background-color: darkmagenta;
+    flex-grow: 1;
+    flex-basis: 10rem;
+    min-height: 8rem;
+    margin: .5rem;
+    padding: .5rem;
+}
+
+
 /* Desktop */
-@media (min-width: 480px) {
+@media only screen and (min-width: 900px) {
+    body {
+        border-top: 2px solid indianred;
+    }
     figcaption {
         font-size: 1rem;
-        color: red;
+        padding: .5rem;
+        text-align: right;
+        top: 0;
+        right: 0;
     }
     #gallery {
         margin: 0 4rem;
@@ -107,23 +140,27 @@ nav a#prev {
     header {
         height: auto;
     }
+    header p {
+        margin: 2.5rem 0 0;
+    }
     h1 {
         font-size: 2rem;
-        padding: .75rem 0 1rem 1rem;
     }
     @keyframes slideup {
         from {
-            background-color: chocolate;
+            /*background-color: chocolate;*/
         }
         to {
-            background-color: burlywood;
+            /*background-color: burlywood;*/
             font-size: 130%;
+            padding: .125em .25em;
+
         }
     }
     nav a {
-        width: 3rem;
-        height: 3rem;
-        padding: 1.5rem .5rem;
+        width: 2.5rem;
+        height: 2.5rem;
+        padding: 1.5rem .75rem;
     }
 
 }
