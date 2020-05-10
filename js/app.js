@@ -3,6 +3,9 @@
 // To INCLUDE jsonFlickrApi wrapper
 // jsoncallback=?
 
+// TO DO
+// - Make pervious button appear earlier, maybe when a 1/4 of the images have loaded?
+
 (function () {
     "use strict";
 
@@ -30,8 +33,10 @@
     // https://www.flickr.com/services/api/flickr.photosets.getList.html
     // https://www.flickr.com/services/rest/?method=flickr.photosets.getList&api_key=7ec3fd13ea8480e8a098bd82a474723a&user_id=8110271%40N05&format=json
 
-
-    window.onresize = placeArrows;
+    // Place arrows
+    placeArrows(window.innerHeight);
+    // Adjust placement on window resize
+    window.addEventListener('resize', () => { placeArrows(window.innerHeight) });
 
     // Run when DOM is ready
     $(document).ready(function () {
@@ -44,12 +49,8 @@
             // Loop through the created gallery photo array
             $.each(output, function (index, item) {
                 // Add the slide containers, which in this case are figures and figcaptions
-                addFigures(item[0],item[1]);
+                addFigures(item[0],item[1],index + 1);
             });
-
-            setTimeout(function(){
-                placeArrows()
-            }, 500);
 
             // Because all figures are initally set to inactive, set the first one to active
             $("figure:first").removeClass("inactive").addClass("active");
@@ -61,6 +62,7 @@
             // Pass the array's length to the navigation function
             navigation(last_index_value);
         });
+
     });
 
     // Navigate through the slides, preloading images along the way
@@ -69,52 +71,52 @@
 
         // Phase 2 enhancement is adding keypress support
 
+        console.log("The number of images in the gallery is " + total);
+
         $("nav a").on("click", function (e) {
+
             e.preventDefault();
 
-            // Total of already loaded images. Default should be 2.
+
+
+            // The element, in this case a figure
+            let element = jQuery("figure");
+
+            // LOAD IMAGES *************************** //
+            // Images load, in sequence, whether the 'next' or 'previous' buttons are clicked.
+
+            // Total of already loaded images. Default is 2.
             let loaded_image_total = document.getElementsByTagName("img").length;
 
-            // Display the PREV button that was hidden be default.
-            document.querySelector('#prev').style.display = "block";
+            // Set values for the eventual image request by pulling the
+            // attributes from the elements initially added to the DOM.
+            // The loaded_image_total variable will always be one less than we need.
+            let preload_id = element.eq(loaded_image_total).attr("id");
+            let preload_alt = element.eq(loaded_image_total).children("figcaption").text();
 
-            // The element
-            let element = jQuery("figure");
+            // Unless all images are already loaded, request a single image
+            if (loaded_image_total !== total){
+                requestImage(preload_id, preload_alt);
+            }
+
+            let increment_value;
 
             // The index of the currently active element
             let active_element_index = $("figure.active").index();
-
-            console.log("active_element_index: " + active_element_index);
+            //console.log("The index of the currently active element: " + active_element_index);
 
             // Default to the action for the left (previous) navigation element
-            let increment_value = -1;
+            increment_value = -1;
 
-            // WE DON'T NEED A CONDITION HERE. THE IMAGES SHOULD BE LOADING ON EVERY CLICK
-            // NOT EVERY "NEXT" CLICK.
             // If the "next" link is clicked, change the increment value
             if ($(this).attr("id") === "next") {
                 increment_value = 1;
-
-                // Load Images **************** //
-
-                // Since two images are initially loaded, the next image to load
-                // is two ahead of the currently active slide.
-                // This is to make a smooth and responsive UI
-                let next_image_index = active_element_index + 2;
-
-                // Set values for the eventual image request
-                let preload_id = element.eq(next_image_index).attr("id");
-                let preload_alt = element.eq(next_image_index).children("figcaption").text();
-
-                // Load an image unless all images are already loaded
-                if (loaded_image_total !== total){
-                    requestImage(preload_id, preload_alt);
-                }
-
+                //console.log("increment_value: " + increment_value)
             }
 
             // The next or previous element in the sequence to make active
             let active_index = active_element_index + increment_value;
+            //console.log("active_index: " + active_index);
 
             // Clear classes to start over
             element.removeClass("active");
@@ -130,13 +132,17 @@
                 element.eq(active_index).addClass("active").fadeIn();
             }
 
-            if(loaded_image_total !== total && active_element_index === 0 ) {
-                document.querySelector("#prev").style.display = "none";
+            // Show the 'previous' button when there are more than half of the total images loaded
+            // && active_element_index === 0
+            console.log("total / 2: " + total / 2);
+            console.log("loaded_image_total: " + loaded_image_total);
+            if(loaded_image_total > (total / 2)) {
+                document.querySelector("#prev").style.display = "block";
             }
 
-            // Obviously , this needs to be refined.
+            // Transition from first slide to the rest of the slides.
+            // Obviously, this needs to be refined.
             if($(".active").index() !== 0) {
-                //console.log("Boom, first slide!");
                 $("h1").addClass("variation");
             } else {
                 $("h1").removeClass("variation");
@@ -243,8 +249,8 @@
     // Add the figures into the DOM, loaded with the IDs and captions from the initial API request
     // imageid = The individual photo ID
     // captiontext = The individual photo caption text
-    function addFigures (imageid, captiontext) {
-        let figcaption = $("<figcaption>").text(captiontext);
+    function addFigures (imageid, captiontext, x) {
+        let figcaption = $("<figcaption>").text(captiontext + " (" + x + ")");
         let figure = $("<figure>", {
                         id: imageid,
                         class: "inactive"
@@ -253,19 +259,13 @@
         $("#gallery").append(figure);
     }
 
-    // Place arrows on INITIAL images load
-    // Should we worry about subsequent images, i.e. be calculated each time?
-    function placeArrows() {
-        // Place arrow navigation
-        let element = document.querySelector("figure");
-        let elementheight = element.offsetHeight;
+    // Place arrows based on window size
+    function placeArrows(h) {
         let controloffset = document.getElementById("next").offsetHeight;
-        let arrowposition = ((elementheight - controloffset) / 2) + "px";
+        let arrowposition = Math.floor(((h - controloffset) / 2)) + "px";
         // Debug
-        //console.log("elementheight=" + elementheight + ", controloffset=" + controloffset + ", arrowposition=" + arrowposition);
-
+        //console.log("controloffset=" + controloffset + ", arrowposition=" + arrowposition);
         $("nav a").css("top", arrowposition);
-        $("nav").show();
     }
 
     // Display the gallery title
@@ -277,6 +277,7 @@
         }
     }
 
+    // Locate the ID in the URL
     function getPhotosetID() {
 
         let id = "";
