@@ -1,17 +1,24 @@
-a {
-    color: #f0f0f0;
+:root {
+    --link-color: #f0f0f0;
+    --article-background-color: #999999;
+    --body-background-color: #565656;
+    --header-background-color: #000000;
 }
-
+a {
+    color: var(--link-color);
+}
+a:hover {
+    text-decoration: none;
+}
 html {
     font-size: 100%;
 }
-
 body {
+    border-top: 2px solid darkorange;
     margin: 0;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    background-color: #000000;
+    background-color: var(--body-background-color);
 }
-
 button {
     display: none;
     position: absolute;
@@ -23,53 +30,36 @@ button {
     border: none;
     z-index: 1;
 }
-
-figcaption {
-    color: #FFFFFF;
-    font-size: .75rem;
-    padding: .5rem;
-    text-align: right;
-    /*background-color: lightblue;*/
-    position: absolute;
-    bottom: 0;
-}
-
 figure {
     margin: 0;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position-x: center;
     position: relative;
 }
 figure.inactive {
     display: none;
 }
-figure.active {}
-
-figure img {
-    width: 100%;
+figcaption {
+    color: #FFFFFF;
+    position: absolute;
+    bottom: 2em;
+    left: 2em;
 }
-
-h1 {
-    color: #f0f0f0;
-    font-size: 1.5rem;
-}
-
-h1.variation {
-    animation-duration: 1s;
-    animation-name: slideup;
-    animation-fill-mode: forwards;
-}
-
 header {
     display: flex;
-    background-color: cornflowerblue;
-    padding: 0 1rem 1rem;
+    padding: .75rem 2rem;
+    background-color: var(--header-background-color);
 }
 header h1 {
+    font-family: Cutive;
+    font-weight: 400;
+    color: #f0f0f0;
+    font-size: 1rem;
     flex-grow: 1;
-    background-color: bisque;
 }
 header p {
-    margin: 1.5rem 0 0;
-    background-color: darkseagreen;
+    margin: 0;
 }
 
 /* Arrow navigation */
@@ -108,19 +98,22 @@ nav a#prev {
 
 /* Index page */
 section {
-    border: 1px solid red;
     display: flex;
     flex-wrap: wrap;
 }
 section article {
-    background-color: darkmagenta;
+    background-color: var(--article-background-color);
+    color: #222222;
     flex-grow: 1;
-    flex-basis: 10rem;
+    flex-basis: 14rem;
     min-height: 8rem;
-    margin: .5rem;
-    padding: .5rem;
+    margin: .25rem;
+    padding: .75rem .25rem 0 1rem;
 }
-
+section article a {
+    font-weight: 700;
+    font-size: 130%;
+}
 
 /* Desktop */
 @media only screen and (min-width: 900px) {
@@ -131,8 +124,8 @@ section article {
         font-size: 1rem;
         padding: .5rem;
         text-align: right;
-        top: 0;
-        right: 0;
+        /*top: 0;*/
+        /*right: 0;*/
     }
     #gallery {
         margin: 0 4rem;
@@ -140,22 +133,8 @@ section article {
     header {
         height: auto;
     }
-    header p {
-        margin: 2.5rem 0 0;
-    }
-    h1 {
-        font-size: 2rem;
-    }
-    @keyframes slideup {
-        from {
-            /*background-color: chocolate;*/
-        }
-        to {
-            /*background-color: burlywood;*/
-            font-size: 130%;
-            padding: .125em .25em;
-
-        }
+    header h1 {
+        font-size: 1.5rem;
     }
     nav a {
         width: 2.5rem;
