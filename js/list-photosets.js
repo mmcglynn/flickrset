@@ -15,16 +15,29 @@
 
     fetch(url)
         .then(response => response.json())
-        .then(function(data) {
+        .then(function(data)  {
             //console.log(data.photosets.photoset.length);
 
             let photoset_total = data.photosets.photoset.length;
 
             let display_element = "";
 
+            function convert_date( unix_timestamp ) {
+                let date = new Date(unix_timestamp * 1000)
+                const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+                let formatted_date = months[date.getMonth()] + " " + date.getFullYear();
+                return formatted_date;
+            }
+
             for ( var i = 0; i < photoset_total; i++)
             {
-                display_element += "<article><a href=\"gallery.html?id=" + data.photosets.photoset[i].id + "\">" + data.photosets.photoset[i].title._content + data.photosets.photoset[i].photos + "</a></article>";
+                display_element += "<article><a href=\"gallery.html?id=";
+                display_element += data.photosets.photoset[i].id + "\">";
+                display_element += data.photosets.photoset[i].title._content + "</a>";
+                display_element += "<p><strong>" + convert_date(data.photosets.photoset[i].date_create) + "</strong></p>";
+                display_element += "<p>" + data.photosets.photoset[i].description._content + "</p>";
+                display_element += "<p>" + data.photosets.photoset[i].photos + " images</p>";
+                display_element += "</article>";
 
                 document.querySelector("section").innerHTML = display_element;
             }
