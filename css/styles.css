@@ -1,8 +1,8 @@
 :root {
-    --link-color: #f0f0f0;
-    --article-background-color: #999999;
-    --body-background-color: #565656;
-    --header-background-color: #000000;
+    --link-color: #333333;
+    --article-background-color: #ffffff;
+    --body-background-color: #e1e1e1;
+    --header-background-color: #f1f1f1;
 }
 a {
     color: var(--link-color);
@@ -42,19 +42,22 @@ figure.inactive {
 }
 figcaption {
     color: #FFFFFF;
+    background-color: rgba(0,0,0,0.375);
     position: absolute;
     bottom: 2em;
-    left: 2em;
+    left: 45%;
 }
 header {
     display: flex;
+    align-items: center;
     padding: .75rem 2rem;
     background-color: var(--header-background-color);
 }
 header h1 {
-    font-family: Cutive;
+    font-family: Cutive, Georgia, serif;
     font-weight: 400;
-    color: #f0f0f0;
+    margin: 1rem 0 .375em 0;
+    color: #666666;
     font-size: 1rem;
     flex-grow: 1;
 }
@@ -70,7 +73,7 @@ nav a svg {
     width: 100%;
 }
 nav a svg path.fill {
-    fill: rgba(240,240,240,0.5);
+    fill: rgba(240,240,240,0.75);
 }
 nav a {
     display: block;
@@ -100,26 +103,38 @@ nav a#prev {
 section {
     display: flex;
     flex-wrap: wrap;
+    padding: .5rem;
 }
 section article {
     background-color: var(--article-background-color);
-    color: #222222;
+    border: 1px solid #d5d5d5;
     flex-grow: 1;
     flex-basis: 14rem;
     min-height: 8rem;
-    margin: .25rem;
-    padding: .75rem .25rem 0 1rem;
+    margin: .75rem;
 }
-section article a {
+section article header {
+    background-size: cover;
+    padding: 30%;
+}
+section article main {
+    margin: .75em;
+}
+section article main a {
     font-weight: 700;
     font-size: 130%;
+}
+section article main p {
+    color: #666666;
+    margin: .75em 0;
+}
+section article footer {
+    color: #999999;
+    font-size: 90%;
 }
 
 /* Desktop */
 @media only screen and (min-width: 900px) {
-    body {
-        border-top: 2px solid indianred;
-    }
     figcaption {
         font-size: 1rem;
         padding: .5rem;
