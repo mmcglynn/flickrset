@@ -267,12 +267,6 @@
         jQuery("#gallery").append(figure);
     }
 
-
-    //const t = document.querySelector('figure').offsetTop;
-
-    //console.log(t);
-
-
     // Place arrows based on window size
     function placeArrows(h) {
         let controloffset = document.getElementById("next").offsetHeight;
