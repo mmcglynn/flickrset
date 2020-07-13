@@ -33,7 +33,10 @@
                 thumbs_array.push(photo.primary);
 
                 display_element += "<article id=\"" + photo.primary + "\">";
-                display_element += "<header></header><main>";
+                display_element += "<header>";
+                display_element += "<a href=\"gallery.html?id=" + photo.id + "\">";
+                display_element += photo.title._content + "</a>";
+                display_element += "</header><main>";
                 display_element += "<a href=\"gallery.html?id=" + photo.id + "\">";
                 display_element += photo.title._content + "</a>";
                 display_element += "<p><strong>" + convert_date(photo.date_create) + "</strong></p>";
