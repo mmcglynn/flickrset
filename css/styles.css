@@ -14,7 +14,6 @@ html {
     font-size: 100%;
 }
 body {
-    border-top: 2px solid darkorange;
     margin: 0;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     background-color: var(--body-background-color);
@@ -41,22 +40,23 @@ figure.inactive {
     display: none;
 }
 figcaption {
-    color: #FFFFFF;
-    background-color: rgba(0,0,0,0.375);
+    color: #777777;
     position: absolute;
-    bottom: 2em;
-    left: 45%;
+    width: 100%;
+    bottom: 8rem;
+    left: 0;
+    text-align: center;
 }
 header {
     display: flex;
     align-items: center;
-    padding: .75rem 2rem;
+    padding: .75rem;
     background-color: var(--header-background-color);
 }
 header h1 {
     font-family: Cutive, Georgia, serif;
     font-weight: 400;
-    margin: 1rem 0 .375em 0;
+    margin: .5rem 0 .125em 0;
     color: #666666;
     font-size: 1rem;
     flex-grow: 1;
@@ -64,38 +64,51 @@ header h1 {
 header p {
     margin: 0;
 }
+header p a {
+    color: #ffffff;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 75%;
+    background-color: darkcyan;
+    padding: .375em 1em;
+    border-radius: 6px;
+}
+header p a span {
+    display: none;
+}
+header p a:hover {
+    background-color: #999999;
+}
 
 /* Arrow navigation */
 nav {
-    /*display: none;*/
+    overflow: hidden;
+    position: absolute;
+    z-index: 100;
+    width: 100%;
+    bottom: 0;
+}
+nav a {
+    display: block;
+    width: 6rem;
+    height: 6rem;
+    z-index: 1;
+    background-color: rgba(0,0,0,0.25);
+}
+nav a:hover {
+    background-color: rgba(0,0,0,0.5);
 }
 nav a svg {
-    width: 100%;
+    margin: .75em;
 }
 nav a svg path.fill {
     fill: rgba(240,240,240,0.75);
 }
-nav a {
-    display: block;
-    list-style-type: none;
-    width: 2rem;
-    height: 2rem;
-    padding: .5rem;    
-    background-color: rgba(0,0,0,0.25);
-    position: fixed;
-    z-index: 1;
-}
-nav a:hover {
-    background-color: rgba(0,0,0,1);
-}
-nav a:hover svg path.fill {
-    fill: rgba(255,255,255,0.75);
-}
-nav a#next { 
-    right: 0;
+nav a#next {
+    float: right;
 }
 nav a#prev { 
-    left: 0;
+    float: left;
     display: none;
 }
 
@@ -115,7 +128,13 @@ section article {
 }
 section article header {
     background-size: cover;
+    padding: 0;
+}
+section article header a {
     padding: 30%;
+    width: 100%;
+    display: block;
+    text-indent: -99em;
 }
 section article main {
     margin: .75em;
@@ -138,23 +157,39 @@ section article footer {
     figcaption {
         font-size: 1rem;
         padding: .5rem;
-        text-align: right;
-        /*top: 0;*/
-        /*right: 0;*/
+        bottom: 2em;
     }
     #gallery {
         margin: 0 4rem;
     }
     header {
+        padding: .5rem 1.5rem;
         height: auto;
     }
     header h1 {
+        margin: 1rem 0 .375em 0;
         font-size: 1.5rem;
+    }
+    header p a {
+        padding: .5em 1em;
+        font-size: 85%;
+    }
+    header p a span {
+        display: inline;
+    }
+    nav {
+        overflow: hidden;
+        position: absolute;
+        z-index: 100;
+        width: 100%;
+        bottom: auto;
     }
     nav a {
         width: 2.5rem;
         height: 2.5rem;
         padding: 1.5rem .75rem;
     }
-
+    nav a svg {
+        margin: 0;
+    }
 }
