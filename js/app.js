@@ -34,15 +34,22 @@
     // https://www.flickr.com/services/api/flickr.photosets.getList.html
     // https://www.flickr.com/services/rest/?method=flickr.photosets.getList&api_key=7ec3fd13ea8480e8a098bd82a474723a&user_id=8110271%40N05&format=json
 
-    // Place arrows
-    placeArrows(window.innerHeight);
-    // Adjust placement on window resize
-    window.addEventListener('resize', () => { placeArrows(window.innerHeight); });
+
+    if (window.innerWidth > 900 ) {
+        // Place arrows
+        placeArrows(window.innerHeight);
+
+        // Adjust placement on window resize
+        window.addEventListener('resize', () => {
+            placeArrows(window.innerHeight);
+        });
+    }
+
 
     // Run requestGalleryMembers when DOM is ready
     jQuery(document).ready(function () {
 
-        requestGalleryMembers(function(output){
+        requestGalleryMembers(function (output) {
 
             // The integer of the last index in the photos array
             let last_index_value = output.length;
@@ -50,15 +57,11 @@
             // Loop through the created gallery photo array
             jQuery.each(output, function (index, item) {
                 // Add the slide containers, which in this case are figures and figcaptions
-                addFigures(item[0],item[1],index + 1);
+                addFigures(item[0], item[1], index + 1);
             });
 
             // Because all figures are initally set to inactive, set the first one to active
             jQuery("figure:first").removeClass("inactive").addClass("active");
-
-            // Populate the first two images
-            //requestImage(output[0][0],output[0][1]);
-            //requestImage(output[1][0],output[1][1]);
 
             requestImage(output[0][0]);
             requestImage(output[1][0]);
@@ -67,20 +70,38 @@
             navigation(last_index_value);
         });
 
+
+
+
     });
+
 
     // Navigate through the slides, preloading images along the way
     // Needs enhancement of keypress
     function navigation(total) {
 
-        // Debug
-        //console.log("The number of images in the gallery is " + total);
-
         jQuery("nav a").on("click",function (e) {
-
-            // Quell the default behavior
             e.preventDefault();
+            advance_slides(this.id);
+        });
 
+        jQuery(document).keydown(function(e) {
+            let direction = "";
+            e.preventDefault();
+            switch(e.which) {
+                case 37:
+                    direction = "prev";
+                    break;
+                case 39:
+                    console.log("next");
+                    direction = "next";
+                    break;
+                default: return;
+            }
+            advance_slides(direction);
+        });
+
+        function advance_slides(direction) {
             // Get a list of all elements
             let elements = document.getElementsByTagName("figure");
 
@@ -88,7 +109,7 @@
             // -1 for "previous" navigation link
             let increment_value = -1;
             // +1 for the "next" navigation link
-            if (this.id  === "next") {
+            if (direction  === "next") {
                 increment_value = 1;
             }
 
@@ -133,7 +154,7 @@
 
 
             // Find the currently active image then
-            console.log(elements[active_element_index].previousSibling);
+            // console.log(elements[active_element_index].previousSibling);
 
 
             // Find the the previous element's ID then
@@ -141,7 +162,7 @@
             if (elements[active_element_index].previousSibling !== null) {
                 let previous_element_id = elements[active_element_index].previousSibling.id;
                 if(unloaded_images.lastIndexOf(previous_element_id) === -1) {
-                    console.log("The is a previous image.");
+                    // console.log("The is a previous image.");
                     document.getElementById("prev").style.display = "block";
                 } else {
                     document.getElementById("prev").style.display = "none";
@@ -158,8 +179,7 @@
             if(unloaded_images.length > 0) {
                 requestImage(unloaded_images[0]);
             }
-
-        });
+        }
     }
 
     // Process the data externally by passing in a callback function
@@ -195,7 +215,7 @@
     // Get the individual image from the getSizes method
     // id - the id of the image
     // altText - the alternative text of the image
-    function requestImage (id) {
+    function requestImage(id) {
 
         // Debug
         //d = new Date();
@@ -238,7 +258,7 @@
 
                 // Append the element in the proper ID location
                 jQuery("figure#" + id).css({
-                    'background-image':'url(' + data.sizes.size[size_index].source + ')'
+                    'background-image': 'url(' + data.sizes.size[size_index].source + ')'
                 });
 
             },
@@ -252,17 +272,17 @@
     // imageid = The individual photo ID
     // captiontext = The individual photo caption text
     // position = the position in the sequence
-    function addFigures (imageid, captiontext, position) {
+    function addFigures(imageid, captiontext, position) {
 
         let figure_height = window.innerHeight - (document.getElementById('gallery').offsetTop - 1);
 
         let figcaption = jQuery("<figcaption>").text(captiontext + " (" + position + ")");
         let figure = jQuery("<figure>", {
-                        id: imageid,
-                        class: "inactive",
-                        title: captiontext,
-                        css: {"height":figure_height}
-                        });
+            id: imageid,
+            class: "inactive",
+            title: captiontext,
+            css: {"height": figure_height}
+        });
         figure.append(figcaption);
         jQuery("#gallery").append(figure);
     }
@@ -273,7 +293,7 @@
         let arrowposition = Math.floor(((h - controloffset) / 2)) + "px";
         // Debug
         //console.log("controloffset=" + controloffset + ", arrowposition=" + arrowposition);
-        jQuery("nav a").css("top", arrowposition);
+        jQuery("nav").css("top", arrowposition);
     }
 
     // Display the gallery title
@@ -297,7 +317,7 @@
             // Search the URL parameters
             const params = new URLSearchParams(url.search);
             // Check if the 'id' parameter exists
-            if(params.has("id")) {
+            if (params.has("id")) {
                 // Get the id's value
                 id = url.searchParams.get("id");
                 //console.log(photoset_id);
@@ -308,5 +328,6 @@
         }
         return id;
     }
+
 
 }());
