@@ -75,7 +75,6 @@
 
     });
 
-
     // Navigate through the slides, preloading images along the way
     // Needs enhancement of keypress
     function navigation(total) {
@@ -93,7 +92,6 @@
                     direction = "prev";
                     break;
                 case 39:
-                    console.log("next");
                     direction = "next";
                     break;
                 default: return;
@@ -101,9 +99,14 @@
             advance_slides(direction);
         });
 
+        // Navigate the slides and load the images using events
         function advance_slides(direction) {
             // Get a list of all elements
             let elements = document.getElementsByTagName("figure");
+
+            let elements_length = total - 1;
+
+            //console.log("elements[elements_length].style.length: " + elements[elements_length].style.length);
 
             // Set the navigation increment
             // -1 for "previous" navigation link
@@ -119,16 +122,13 @@
             let unloaded_images = [], active_element_index = 0, i = -1;
             for (let element of elements) {
                 i++;
-                if(1 === element.style.length) {
+                if( 1 === element.style.length ) {
                     unloaded_images.push(element.id);
                 }
-                if(element.classList[0] === "active") {
+                if( element.classList[0] === "active" ) {
                     active_element_index = i;
                 }
             }
-
-            // console.log(elements[active_element_index].id);
-            // console.log(elements[active_element_index].previousSibling.id);
 
             // SHOW ACTIVE SLIDE ********************* //
 
@@ -138,43 +138,35 @@
             // Debug
             //console.log(`TRACE\nincrement_value: ${increment_value}\nunloaded_images: ${unloaded_images}\nactive_element_index: ${active_element_index}\nnext_active_element_index: ${next_active_element_index}`);
 
+            // If the first image has a background image, show the previous button
+            if (elements[0].style.length > 1) {
+                //console.log("1. The first image has a background image.");
+                document.getElementById("prev").style.display = "block";
+            }
+
+            // The the first slide is shown and the last slide has no image, hide the "prev" button.
+            if (active_element_index === 1 && elements[elements_length].style.length < 2) {
+                //console.log("2. The first slide is shown and the last slide has no image.");
+                document.getElementById("prev").style.display = "none";
+            }
+
             // If "next" is clicked on the last slide, show the first slide
-            if (active_element_index === (total - 1) && increment_value === 1) {
+            if (active_element_index === elements_length && increment_value === 1) {
+                //console.log("3. This is the first slide.");
                 next_active_element_index = 0;
             }
 
             // If "previous" is clicked on the first slide, show the last slide
             if(active_element_index === 0 && increment_value === -1 ) {
-                next_active_element_index = total - 1;
+                //console.log("4. This is the last slide.");
+                next_active_element_index = elements_length;
             }
 
             // Replace the class names
             elements[active_element_index].className = elements[active_element_index].className.replace("active","inactive");
             elements[next_active_element_index].className = elements[next_active_element_index].className.replace("inactive","active");
 
-
-            // Find the currently active image then
-            // console.log(elements[active_element_index].previousSibling);
-
-
-            // Find the the previous element's ID then
-            // If that ID is in the unloaded image array
-            if (elements[active_element_index].previousSibling !== null) {
-                let previous_element_id = elements[active_element_index].previousSibling.id;
-                if(unloaded_images.lastIndexOf(previous_element_id) === -1) {
-                    // console.log("The is a previous image.");
-                    document.getElementById("prev").style.display = "block";
-                } else {
-                    document.getElementById("prev").style.display = "none";
-                }
-            }
-
-            // Show the previous button
-
-
             // LOAD IMAGE **************************** //
-
-            //console.log(unloaded_images[0]);
             // Load the first image in the unloaded images array
             if(unloaded_images.length > 0) {
                 requestImage(unloaded_images[0]);
@@ -328,6 +320,5 @@
         }
         return id;
     }
-
 
 }());
