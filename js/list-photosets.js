@@ -11,7 +11,7 @@
 
     // API request URL for all photosets by user
     // https://www.flickr.com/services/api/flickr.photosets.getList.html
-    const url = `${api}?method=flickr.photosets.getList&api_key=${api_key}&user_id=8110271%40N05&format=json&nojsoncallback=1`;
+    const url = `${api}?method=flickr.photosets.getList&api_key=${api_key}&user_id=8110271%40N05&format=json&&per_page=12&nojsoncallback=1`;
 
     // API request URL for an individual photo
     // https://www.flickr.com/services/api/flickr.photos.getSizes.html
@@ -57,11 +57,6 @@
             requestImage(thumbs_array);
 
         })
-        // .then(response => response.json())
-        // .then(function (data) {
-        //     requestImage(data);
-        //
-        // })
         .catch(error => console.warn(error));
 
     // Format the date suppied by flickr
@@ -71,8 +66,6 @@
         let formatted_date = months[date.getMonth()] + " " + date.getFullYear();
         return formatted_date;
     }
-
-
 
     // Get the individual image from the getSizes method
     // id - the id of the image
