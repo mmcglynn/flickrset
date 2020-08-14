@@ -63,116 +63,303 @@
             // Because all figures are initally set to inactive, set the first one to active
             jQuery("figure:first").removeClass("inactive").addClass("active");
 
-            requestImage(output[0][0]);
-            requestImage(output[1][0]);
+            requestImage(output[0][0],output[0][1]);
+            requestImage(output[1][0],output[1][1]);
 
             // Pass the array's length to the navigation function
             navigation(last_index_value);
         });
 
-
-
-
     });
+
 
     // Navigate through the slides, preloading images along the way
     // Needs enhancement of keypress
     function navigation(total) {
 
-        jQuery("nav a").on("click",function (e) {
-            e.preventDefault();
-            advance_slides(this.id);
+        // Get a list of all elements
+        let elements = document.getElementsByTagName("figure");
+
+
+
+        // Handle the arrow navigation links
+        let navitems = document.querySelectorAll("nav a");
+        navitems.forEach(function(item) {
+            let navitem = document.getElementById(item.id);
+            navitem.addEventListener("click", (e) => {
+                let increment = 0;
+                e.preventDefault();
+                if (navitem.id === "prev") {
+                    increment = -1;
+                } else {
+                    increment = 1;
+                }
+                advance_slides(increment);
+            });
         });
 
-        jQuery(document).keydown(function(e) {
-            let direction = "";
-            e.preventDefault();
-            switch(e.which) {
-                case 37:
-                    direction = "prev";
+        // Handle the arrow keys on the keyboard
+        document.addEventListener('keydown', logKey);
+        let increment = 0;
+        function logKey(e) {
+            switch(e.code) {
+                case "ArrowRight":
+                    increment = 1;
                     break;
-                case 39:
-                    direction = "next";
+                case "ArrowLeft":
+                    increment = -1;
                     break;
-                default: return;
+                default:
+                    increment = 0;
             }
-            advance_slides(direction);
-        });
-
-        // Navigate the slides and load the images using events
-        function advance_slides(direction) {
-            // Get a list of all elements
-            let elements = document.getElementsByTagName("figure");
-
-            let elements_length = total - 1;
-
-            //console.log("elements[elements_length].style.length: " + elements[elements_length].style.length);
-
-            // Set the navigation increment
-            // -1 for "previous" navigation link
-            let increment_value = -1;
-            // +1 for the "next" navigation link
-            if (direction  === "next") {
-                increment_value = 1;
-            }
-
-            // Loop though the element list and determine:
-            // - the index of the currently active element
-            // - the total of already loaded images by counting style attributes (default is 2)
-            let unloaded_images = [], active_element_index = 0, i = -1;
-            for (let element of elements) {
-                i++;
-                if( 1 === element.style.length ) {
-                    unloaded_images.push(element.id);
-                }
-                if( element.classList[0] === "active" ) {
-                    active_element_index = i;
-                }
-            }
-
-            // SHOW ACTIVE SLIDE ********************* //
-
-            // The next or previous element in the sequence to make active
-            let next_active_element_index = active_element_index + increment_value;
-
-            // Debug
-            //console.log(`TRACE\nincrement_value: ${increment_value}\nunloaded_images: ${unloaded_images}\nactive_element_index: ${active_element_index}\nnext_active_element_index: ${next_active_element_index}`);
-
-            // If the first image has a background image, show the previous button
-            if (elements[0].style.length > 1) {
-                //console.log("1. The first image has a background image.");
-                document.getElementById("prev").style.display = "block";
-            }
-
-            // The the first slide is shown and the last slide has no image, hide the "prev" button.
-            if (active_element_index === 1 && elements[elements_length].style.length < 2) {
-                //console.log("2. The first slide is shown and the last slide has no image.");
-                document.getElementById("prev").style.display = "none";
-            }
-
-            // If "next" is clicked on the last slide, show the first slide
-            if (active_element_index === elements_length && increment_value === 1) {
-                //console.log("3. This is the first slide.");
-                next_active_element_index = 0;
-            }
-
-            // If "previous" is clicked on the first slide, show the last slide
-            if(active_element_index === 0 && increment_value === -1 ) {
-                //console.log("4. This is the last slide.");
-                next_active_element_index = elements_length;
-            }
-
-            // Replace the class names
-            elements[active_element_index].className = elements[active_element_index].className.replace("active","inactive");
-            elements[next_active_element_index].className = elements[next_active_element_index].className.replace("inactive","active");
-
-            // LOAD IMAGE **************************** //
-            // Load the first image in the unloaded images array
-            if(unloaded_images.length > 0) {
-                requestImage(unloaded_images[0]);
+            if(Math.abs(increment) === 1) {
+                // console.log("Math.abs(increment) " + Math.abs(increment) + ", increment: " + increment + ", e.code: " + e.code);
+                advance_slides(increment);
             }
         }
+
+        // Need to handle when previous keyboard control is activated
+        function advance_slides(increment) {
+
+
+            // Count the images already loaded
+            let loaded_images = document.getElementsByTagName("img").length;
+            console.log("There are " + loaded_images + " images loaded");
+            console.log("Math.floor(total/2): " + Math.floor(total/2));
+
+            // If half or more of the images are loaded, show the 'previous' control
+            //if ( (loaded_images > Math.floor(total/2) && -1 === increment) || (1 === increment)) {
+            if ( loaded_images < Math.floor(total/2) && -1 === increment ) {
+                console.log ("Do nothing at all.");
+            } else {
+                if (loaded_images > Math.floor(total/2)) {
+                    document.getElementById("prev").style.display = "block";
+                }
+
+                // For figures with no child image, add the relevant attributes to an array
+                let unloaded_images = [];
+                let active_element_index = 0, i = 0;
+
+                for (let element of elements) {
+                    if (element.className === "active") {
+                        active_element_index = i;
+                    }
+                    // Figures with only a figcaption as a child don't yet have a child image
+                    // Push those attributes into to the array
+                    if (element.childElementCount < 2) {
+                        unloaded_images.push(element.id, element.title);
+                    }
+                    i++;
+                }
+
+                // The the array is not empty, load the first image in the unloaded images array
+                if (unloaded_images.length > 0) {
+                    requestImage(unloaded_images[0],unloaded_images[1]);
+                }
+
+                // Determine which direction
+                let next_active_element_index = active_element_index + increment;
+                console.log("active_element_index: " + active_element_index);
+                console.log("next_active_element_index: " + next_active_element_index);
+                console.log("total: " + total);
+
+                // Going forward from the last slide, move to the first slide
+                if (next_active_element_index === total) {
+                    console.log("You've hit the last slide!");
+                    active_element_index = total - 1;
+                    next_active_element_index = 0;
+                }
+
+                // Going back from the first slide, move to the last slide
+                // If "previous" is clicked on the first slide, show the last slide
+                if(active_element_index === 0 && increment === -1 ) {
+                    console.log("4. This is the first slide.");
+                    next_active_element_index = (elements.length - 1);
+                }
+
+                // Replace the class names based on the calculation above
+                elements[active_element_index].className = elements[active_element_index].className.replace("active","inactive");
+                elements[next_active_element_index].className = elements[next_active_element_index].className.replace("inactive","active");
+
+            }
+
+        }
+
+    //     // Navigate the slides and load the images using events
+    //     function advance_slides(direction) {
+    //         // Get a list of all elements
+    //         let elements = document.getElementsByTagName("figure");
+    //
+    //         let elements_length = total - 1;
+    //
+    //         //console.log("elements[elements_length].style.length: " + elements[elements_length].style.length);
+    //
+    //         // Set the navigation increment
+    //         // -1 for "previous" navigation link
+    //         let increment_value = -1;
+    //         // +1 for the "next" navigation link
+    //         if (direction  === "next") {
+    //             increment_value = 1;
+    //         }
+    //
+    //         // Loop though the element list and determine:
+    //         // - the index of the currently active element
+    //         // - the total of already loaded images by counting style attributes (default is 2)
+    //         let unloaded_images = [], active_element_index = 0, i = -1;
+    //         for (let element of elements) {
+    //             i++;
+    //             if( 1 === element.style.length ) {
+    //                 unloaded_images.push(element.id);
+    //             }
+    //             if( element.classList[0] === "active" ) {
+    //                 active_element_index = i;
+    //             }
+    //         }
+    //
+    //         // SHOW ACTIVE SLIDE ********************* //
+    //
+    //         // The next or previous element in the sequence to make active
+    //         let next_active_element_index = active_element_index + increment_value;
+    //
+    //         // Debug
+    //         //console.log(`TRACE\nincrement_value: ${increment_value}\nunloaded_images: ${unloaded_images}\nactive_element_index: ${active_element_index}\nnext_active_element_index: ${next_active_element_index}`);
+    //
+    //         // If the first image has a background image, show the previous button
+    //         if (elements[0].style.length > 1) {
+    //             console.log("1. The first image has a background image.");
+    //             document.getElementById("prev").style.display = "block";
+    //         }
+    //
+    //         // The the first slide is shown and the last slide has no image, hide the "prev" button.
+    //         if (active_element_index === 1 && elements[elements_length].style.length < 2) {
+    //             console.log("2. The first slide is shown and the last slide has no image.");
+    //             document.getElementById("prev").style.display = "none";
+    //         }
+    //
+    //         // If "next" is clicked on the last slide, show the first slide
+    //         if (active_element_index === elements_length && increment_value === 1) {
+    //             console.log("3. This is the first slide.");
+    //             next_active_element_index = 0;
+    //         }
+    //
+    //         // If "previous" is clicked on the first slide, show the last slide
+    //         if(active_element_index === 0 && increment_value === -1 ) {
+    //             console.log("4. This is the last slide.");
+    //             next_active_element_index = elements_length;
+    //         }
+    //
+    //         // Replace the class names
+    //         elements[active_element_index].className = elements[active_element_index].className.replace("active","inactive");
+    //         elements[next_active_element_index].className = elements[next_active_element_index].className.replace("inactive","active");
+    //
+    //         // LOAD IMAGE **************************** //
+    //         // Load the first image in the unloaded images array
+    //         if(unloaded_images.length > 0) {
+    //             requestImage(unloaded_images[0]);
+    //         }
+    //     }
     }
+
+
+    // // Navigate through the slides, preloading images along the way
+    // // Needs enhancement of keypress
+    // function navigation(total) {
+    //
+    //     jQuery("nav a").on("click",function (e) {
+    //         e.preventDefault();
+    //         advance_slides(this.id);
+    //     });
+    //
+    //     jQuery(document).keydown(function(e) {
+    //         let direction = "";
+    //         e.preventDefault();
+    //         // FIND THE PROPER METHOD
+    //         switch(e.which) {
+    //             case 37:
+    //                 direction = "prev";
+    //                 break;
+    //             case 39:
+    //                 direction = "next";
+    //                 break;
+    //             default: return;
+    //         }
+    //         advance_slides(direction);
+    //     });
+    //
+    //     // Navigate the slides and load the images using events
+    //     function advance_slides(direction) {
+    //         // Get a list of all elements
+    //         let elements = document.getElementsByTagName("figure");
+    //
+    //         let elements_length = total - 1;
+    //
+    //         //console.log("elements[elements_length].style.length: " + elements[elements_length].style.length);
+    //
+    //         // Set the navigation increment
+    //         // -1 for "previous" navigation link
+    //         let increment_value = -1;
+    //         // +1 for the "next" navigation link
+    //         if (direction  === "next") {
+    //             increment_value = 1;
+    //         }
+    //
+    //         // Loop though the element list and determine:
+    //         // - the index of the currently active element
+    //         // - the total of already loaded images by counting style attributes (default is 2)
+    //         let unloaded_images = [], active_element_index = 0, i = -1;
+    //         for (let element of elements) {
+    //             i++;
+    //             if( 1 === element.style.length ) {
+    //                 unloaded_images.push(element.id);
+    //             }
+    //             if( element.classList[0] === "active" ) {
+    //                 active_element_index = i;
+    //             }
+    //         }
+    //
+    //         // SHOW ACTIVE SLIDE ********************* //
+    //
+    //         // The next or previous element in the sequence to make active
+    //         let next_active_element_index = active_element_index + increment_value;
+    //
+    //         // Debug
+    //         //console.log(`TRACE\nincrement_value: ${increment_value}\nunloaded_images: ${unloaded_images}\nactive_element_index: ${active_element_index}\nnext_active_element_index: ${next_active_element_index}`);
+    //
+    //         // If the first image has a background image, show the previous button
+    //         if (elements[0].style.length > 1) {
+    //             console.log("1. The first image has a background image.");
+    //             document.getElementById("prev").style.display = "block";
+    //         }
+    //
+    //         // The the first slide is shown and the last slide has no image, hide the "prev" button.
+    //         if (active_element_index === 1 && elements[elements_length].style.length < 2) {
+    //             console.log("2. The first slide is shown and the last slide has no image.");
+    //             document.getElementById("prev").style.display = "none";
+    //         }
+    //
+    //         // If "next" is clicked on the last slide, show the first slide
+    //         if (active_element_index === elements_length && increment_value === 1) {
+    //             console.log("3. This is the first slide.");
+    //             next_active_element_index = 0;
+    //         }
+    //
+    //         // If "previous" is clicked on the first slide, show the last slide
+    //         if(active_element_index === 0 && increment_value === -1 ) {
+    //             console.log("4. This is the last slide.");
+    //             next_active_element_index = elements_length;
+    //         }
+    //
+    //         // Replace the class names
+    //         elements[active_element_index].className = elements[active_element_index].className.replace("active","inactive");
+    //         elements[next_active_element_index].className = elements[next_active_element_index].className.replace("inactive","active");
+    //
+    //         // LOAD IMAGE **************************** //
+    //         // Load the first image in the unloaded images array
+    //         if(unloaded_images.length > 0) {
+    //             requestImage(unloaded_images[0]);
+    //         }
+    //     }
+    // }
 
     // Process the data externally by passing in a callback function
     function requestGalleryMembers(handleData) {
@@ -207,7 +394,7 @@
     // Get the individual image from the getSizes method
     // id - the id of the image
     // altText - the alternative text of the image
-    function requestImage(id) {
+    function requestImage(id, altText) {
 
         // Debug
         //d = new Date();
@@ -226,6 +413,9 @@
 
                 // Instantiate the size array
                 let sizes_array = [];
+
+                // Create a new image object
+                let img = new Image();
 
                 // The index of the sizes array to get the path from
                 let size_index = 0;
@@ -248,10 +438,28 @@
                     }
                 });
 
-                // Append the element in the proper ID location
-                jQuery("figure#" + id).css({
-                    'background-image': 'url(' + data.sizes.size[size_index].source + ')'
+                // Experimental for replacing the loop above with ES6
+                // 7/23/2020
+                // for (let obj of data.sizes.size ) {
+                //     if (output === obj.width) {
+                //         size_index = obj.index;
+                //     }
+                // }
+
+                // Add attributes to the image object
+                $(img).attr({
+                    src: data.sizes.size[size_index].source,
+                    alt: altText,
+                    title: altText
                 });
+
+                // Append the element in the proper ID location
+                $("figure#" + id).append(img);
+
+                // Append the element in the proper ID location
+                // jQuery("figure#" + id).css({
+                //     'background-image': 'url(' + data.sizes.size[size_index].source + ')'
+                // });
 
             },
             error: function () {
@@ -266,7 +474,7 @@
     // position = the position in the sequence
     function addFigures(imageid, captiontext, position) {
 
-        let figure_height = window.innerHeight - (document.getElementById('gallery').offsetTop - 1);
+        let figure_height = window.innerHeight - (document.getElementById('gallery').offsetTop);
 
         let figcaption = jQuery("<figcaption>").text(captiontext + " (" + position + ")");
         let figure = jQuery("<figure>", {
@@ -307,7 +515,8 @@
             // Get the URL
             const url = new URL(window.location.href);
             // Search the URL parameters
-            const params = new URLSearchParams(url.search);
+            let params;
+            params = new URLSearchParams(url.search);
             // Check if the 'id' parameter exists
             if (params.has("id")) {
                 // Get the id's value
