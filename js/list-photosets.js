@@ -20,15 +20,11 @@
     fetch(url)
         .then(response => response.json())
         .then(function (data) {
-            //console.log(data.photosets.photoset.length);
-
-            //let photoset_total = data.photosets.photoset.length;
 
             let display_element = "";
 
             let thumbs_array = [];
 
-            //for ( var i = 0; i < photoset_total; i++)
             for (let photo of data.photosets.photoset) {
                 thumbs_array.push(photo.primary);
 
@@ -57,7 +53,13 @@
             requestImage(thumbs_array);
 
         })
-        .catch(error => console.warn(error));
+        .catch(error => {
+            console.warn(error);
+            let noconnection = document.createElement("div");
+            noconnection.className = "warning";
+            noconnection.textContent = "Dang! There appears to be no internet connection.";
+            document.getElementsByTagName("body")[0].insertAdjacentElement("afterbegin", noconnection);
+        });
 
     // Format the date suppied by flickr
     function convert_date( unix_timestamp ) {
