@@ -2,7 +2,9 @@
     --link-color: #333333;
     --article-background-color: #ffffff;
     --body-background-color: #e1e1e1;
-    --header-background-color: #f1f1f1;
+    --header-background-color: #e1e1e1;
+    /*--body-background-color: #222;*/
+    /*--header-background-color: #111;*/
 }
 a {
     color: var(--link-color);
@@ -10,24 +12,18 @@ a {
 a:hover {
     text-decoration: none;
 }
-html {
-    font-size: 100%;
-}
 body {
     margin: 0;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     background-color: var(--body-background-color);
 }
-button {
-    display: none;
-    position: absolute;
-    top: .75rem;
-    right: .75rem;
-    background-color: goldenrod;
-    width: 2rem;
-    height: 2rem;
-    border: none;
-    z-index: 1;
+@keyframes fade-slide {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 100%;
+    }
 }
 figure {
     margin: 0;
@@ -39,60 +35,76 @@ figure {
 figure.inactive {
     display: none;
 }
-figcaption {
-    color: #777777;
-    position: absolute;
+figure.active {
+    opacity: 0;
+}
+
+figure.active {
+    animation: fade-slide .5s ease-in forwards;
+}
+figure img {
     width: 100%;
-    bottom: 8rem;
-    left: 0;
+}
+
+figcaption {
+    color: #888888;
+    text-shadow: 1px 1px 1px white;
+    position: fixed;
+    width: 100%;
+    bottom: 1rem;
     text-align: center;
 }
+
 header {
     display: flex;
     align-items: center;
-    padding: .75rem;
     background-color: var(--header-background-color);
 }
 header h1 {
     font-family: Cutive, Georgia, serif;
     font-weight: 400;
     text-shadow: 1px 2px 1px white;
-    margin: .5rem 0 .125em 0;
+    margin: 0;
+    padding: 1em 0 .75em 1em;
+    line-height: 1.25em;
     color: #666666;
     font-size: 1rem;
     flex-grow: 1;
 }
-header p {
-    margin: 0;
+header div {
+    color: #777;
+    background-color: #CCC;
+    padding: 1rem 1.25em 1rem 1.25rem;
+    font-size: 80%;
 }
-header p a {
-    color: #ffffff;
-    text-decoration: none;
+header div a {
     text-transform: uppercase;
-    font-size: 75%;
-    background-color: darkseagreen;
-    padding: .375em 1em;
-    border-radius: 6px;
+    text-decoration: none;
 }
-header p a span {
+header div a:hover {
+    color: #666;
+    background-color: khaki;
+}
+header div a span {
     display: none;
 }
-header p a:hover {
-    background-color: #999999;
+
+html {
+    font-size: 100%;
 }
 
 /* Arrow navigation */
 nav {
     overflow: hidden;
-    position: absolute;
+    position: fixed;
     z-index: 100;
     width: 100%;
     bottom: 0;
 }
 nav a {
     display: block;
-    width: 6rem;
-    height: 6rem;
+    width: 5rem;
+    height: 5rem;
     z-index: 1;
     background-color: rgba(0,0,0,0.25);
 }
@@ -155,28 +167,29 @@ section article footer {
 
 /* Desktop */
 @media only screen and (min-width: 900px) {
+    body > div {
+        font-size: 100%;
+    }
     figcaption {
         font-size: 1rem;
         padding: .5rem;
-        bottom: 2em;
+        bottom: 8em;
     }
     #gallery {
         margin: 0 4rem;
     }
     header {
-        padding: .5rem 1.5rem;
         height: auto;
     }
     header h1 {
-        margin: 1rem 0 .375em 0;
         font-size: 1.5rem;
     }
-    header p a {
-        padding: .5em 1em;
-        font-size: 85%;
+    header div {
+        padding: 1rem 1.25em 1rem 1.25rem;
+        font-size: 90%;
     }
-    header p a span {
-        display: inline;
+    header div a span {
+        display: block;
     }
     nav {
         overflow: hidden;
