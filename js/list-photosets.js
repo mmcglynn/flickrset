@@ -55,10 +55,7 @@
         })
         .catch(error => {
             console.warn(error);
-            let noconnection = document.createElement("div");
-            noconnection.className = "warning";
-            noconnection.textContent = "Dang! There appears to be no internet connection.";
-            document.getElementsByTagName("body")[0].insertAdjacentElement("afterbegin", noconnection);
+            show_status("Dang! There appears to be no internet connection.");
         });
 
     // Format the date suppied by flickr
@@ -88,6 +85,14 @@
                 })
                 .catch(error => console.warn(error));
         }
+    }
+
+    // This function needs to be common to both pages
+    function show_status(message) {
+        let noconnection = document.createElement("div");
+        noconnection.className = "warning";
+        noconnection.textContent = message;
+        document.getElementsByTagName("body")[0].insertAdjacentElement("afterbegin", noconnection);
     }
 
 }());
