@@ -1,24 +1,23 @@
-const gulp = require('gulp');
-const uglifyjs = require('gulp-uglify-js');
+const {src, dest, watch } = require('gulp');
+const minifyCSS =  require('gulp-clean-css');
 
-// gulp.task('compress', function () {
-//     return pipeline(
-//         gulp.src('./js/app.js'),
-//         uglify(),
-//         gulp.dest('./dist/')
-//     );
-// });
+const bundleCSS = () => {
+    return src('./css/*.css')
+        .pipe(minifyCSS())
+        .pipe(dest('./dist/'));
+};
 
-gulp.task('uglifyjs', done =>
-    uglifyjs('./dist/'),
-    done()
-);
+const devWatch = () => {
+    watch('./css/*.css', bundleCSS());
+};
 
 
-//gulp.task('run',['css']);
+exports.default = bundleCSS;
 
-// gulp.task('watch', function(){
-//     gulp.watch('./css/style.css',['css']);
-// });
+//exports.devWatch = devWatch;
 
-//gulp.task(default, ['run','watch']);
+// Hello world essentially
+// function defaultTask(cb) {
+//     cb();
+// }
+// exports.default = defaultTask
