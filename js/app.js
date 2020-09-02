@@ -115,13 +115,13 @@
 
             // Count the images already loaded
             let loaded_images = document.getElementsByTagName("img").length;
-            console.log("There are " + loaded_images + " images loaded");
-            console.log("Math.floor(total/2): " + Math.floor(total/2));
+            //console.log("There are " + loaded_images + " images loaded");
+            //console.log("Math.floor(total/2): " + Math.floor(total/2));
 
             // If half or more of the images are loaded, show the 'previous' control
             //if ( (loaded_images > Math.floor(total/2) && -1 === increment) || (1 === increment)) {
             if ( loaded_images < Math.floor(total/2) && -1 === increment ) {
-                console.log ("Do nothing at all.");
+                //console.log ("Do nothing at all.");
             } else {
                 if (loaded_images > Math.floor(total/2)) {
                     document.getElementById("prev").style.display = "block";
@@ -150,14 +150,14 @@
 
                 // Determine which direction
                 let next_active_element_index = active_element_index + increment;
-                console.log("active_element_index: " + active_element_index);
-                console.log("next_active_element_index: " + next_active_element_index);
-                console.log("total: " + total);
-                console.log("=============================");
+                //console.log("active_element_index: " + active_element_index);
+                //console.log("next_active_element_index: " + next_active_element_index);
+                //console.log("total: " + total);
+                //console.log("=============================");
 
                 // Going forward from the last slide, move to the first slide
                 if (next_active_element_index === total) {
-                    console.log("You've hit the last slide!");
+                    //console.log("You've hit the last slide!");
                     active_element_index = total - 1;
                     next_active_element_index = 0;
                 }
@@ -165,7 +165,7 @@
                 // Going back from the first slide, move to the last slide
                 // If "previous" is clicked on the first slide, show the last slide
                 if(active_element_index === 0 && increment === -1 ) {
-                    console.log("4. This is the first slide.");
+                    //console.log("4. This is the first slide.");
                     next_active_element_index = (elements.length - 1);
                 }
 
@@ -199,11 +199,10 @@
                 handleData(photosArray);
             })
             .catch(error => {
-                console.warn(error);
+                //console.warn(error);
             });
 
     }
-
 
     // Get the individual image from the getSizes method
     // id - the id of the image
@@ -249,10 +248,9 @@
                 document.getElementById(id).append(img);
             })
             .catch(error => {
-                console.warn(error);
+                //console.warn(error);
             });
     }
-
 
     // Add the figures into the DOM, loaded with the IDs and captions from the initial API request
     // imageid = The individual photo ID
@@ -264,7 +262,9 @@
 
         // Build the figcaption element and contents
         let figcaption = document.createElement("figcaption");
-        figcaption.append(document.createTextNode(captiontext + " (" + position + ")"));
+        let figcaptiondiv = document.createElement("div");
+        figcaptiondiv.append(document.createTextNode(captiontext + " (" + position + ")"));
+        figcaption.append(figcaptiondiv);
 
         // Build the figure element
         let figure = document.createElement("figure");
@@ -313,7 +313,7 @@
                 id = url.searchParams.get("id");
             }
         } else {
-            alert("There is no image available.");
+            //alert("There is no image available.");
         }
         return id;
     }
