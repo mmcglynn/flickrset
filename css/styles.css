@@ -1,7 +1,7 @@
 :root {
     --link-color: #333333;
-    --article-background-color: #ffffff;
-    --body-background-color: #e1e1e1;
+    --article-background-color: #EEEEEE;
+    --body-background-color: #000000;
     --header-background-color: #f1f1f1;
     /*--body-background-color: #222;*/
     /*--header-background-color: #111;*/
@@ -37,9 +37,6 @@ figure.inactive {
 }
 figure.active {
     opacity: 0;
-}
-
-figure.active {
     animation: fade-slide .5s ease-in forwards;
 }
 figure img {
@@ -47,33 +44,38 @@ figure img {
 }
 
 figcaption {
-    color: #999999;
-    text-shadow: 1px 1px 1px #333333;
     position: fixed;
     width: 100%;
     bottom: 1rem;
     text-align: center;
 }
+figcaption div {
+    color: #777777;
+    display: inline-block;
+    background-color: rgba(25,25,25,0.5);
+    border-radius: 6px;
+    padding: 4px 10px 5px;
+}
 
 header {
     display: flex;
     align-items: center;
-    background: linear-gradient(180deg, rgba(245,245,245,1) 0%, rgba(225,225,225,1) 100%);
+    background: linear-gradient(180deg, rgba(100,100,100,1) 0%, rgba(0,0,0,1) 100%);
 }
 header h1 {
     font-family: Cutive, Georgia, serif;
     font-weight: 400;
-    text-shadow: 1px 2px 1px white;
+    text-shadow: 1px 2px 1px black;
     margin: 0;
-    padding: 1em 0 .75em 1em;
+    padding: .875em 0 .75em 1em;
     line-height: 1.25em;
-    color: #666666;
+    color: #CCCCCC;
     font-size: 1rem;
     flex-grow: 1;
 }
 header div a {
-    color: #999999;
-    background: linear-gradient(0deg, rgba(245,245,245,1) 0%, rgba(225,225,225,1) 100%);
+    color: #CCCCCC;
+    background-color: rgba(100,100,100,0.5);
     font-size: 80%;
     text-transform: uppercase;
     text-decoration: none;
@@ -81,8 +83,8 @@ header div a {
     padding: 1rem 1.25em 1rem 1.25rem;
 }
 header div a:hover {
-    color: #777777;
-    background: linear-gradient(180deg, rgba(245,245,245,1) 0%, rgba(225,225,225,1) 100%);
+    color: #aaaaaa;
+    background-color: #000000;
 }
 header div a span {
     display: none;
@@ -105,10 +107,10 @@ nav a {
     width: 5rem;
     height: 5rem;
     z-index: 1;
-    background-color: rgba(50,50,50,0.25);
+    background-color: rgba(100,100,100,0.5);
 }
 nav a:hover {
-    background-color: rgba(50,50,50,0.5);
+    background-color: rgba(50,50,50,0.25);
 }
 nav a svg {
     margin: .75em;
@@ -132,7 +134,6 @@ section {
 }
 section article {
     background-color: var(--article-background-color);
-    border: 1px solid #d5d5d5;
     flex-grow: 1;
     flex-basis: 14rem;
     min-height: 8rem;
@@ -197,8 +198,6 @@ section article footer {
         display: block;
         padding: .75rem 1.25em .75rem 1.25rem;
         border-radius: 10px;
-        border-right: 1px solid #ccc;
-        border-bottom: 1px solid #ccc;
     }
     header div a span {
         display: inline;
