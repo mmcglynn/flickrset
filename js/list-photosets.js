@@ -6,8 +6,8 @@
     // Set API path
     const api = "https://api.flickr.com/services/rest/";
 
-    // Provide API key
-    const api_key = "7ec3fd13ea8480e8a098bd82a474723a";
+    // Provide the API key
+    const api_key = "";
 
     // API request URL for all photosets by user
     // https://www.flickr.com/services/api/flickr.photosets.getList.html
@@ -89,10 +89,10 @@
 
     // This function needs to be common to both pages
     function show_status(message) {
-        let noconnection = document.createElement("div");
-        noconnection.className = "warning";
-        noconnection.textContent = message;
-        document.getElementsByTagName("body")[0].insertAdjacentElement("afterbegin", noconnection);
+        let appstatus = document.createElement("div");
+        appstatus.className = "warning";
+        appstatus.textContent = message;
+        document.getElementsByTagName("body")[0].insertAdjacentElement("afterbegin", appstatus);
     }
 
 }());

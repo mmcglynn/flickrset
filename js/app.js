@@ -3,10 +3,6 @@
 // To INCLUDE jsonFlickrApi wrapper
 // jsoncallback=?
 
-// TO DO
-// Make pervious button appear earlier, maybe when a 1/4 of the images have loaded?
-// Add keypress support
-
 (function () {
     "use strict";
 
@@ -20,21 +16,15 @@
     const api = "https://api.flickr.com/services/rest/";
 
     // Provide API key
-    const api_key = "7ec3fd13ea8480e8a098bd82a474723a";
+    const api_key = "";
 
     // API request URL for an individual photo
-    // https://www.flickr.com/services/api/flickr.photos.getSizes.html
+    // Documentation: https://www.flickr.com/services/api/flickr.photos.getSizes.html
     const url_onephoto = `${api}?method=flickr.photos.getSizes&api_key=${api_key}&format=json&nojsoncallback=1&photo_id=`;
 
     // API request URL for all photos in the gallery
-    // https://www.flickr.com/services/api/flickr.photosets.getPhotos.html
-    //const url_allphotos = `${api}?method=flickr.photosets.getPhotos&api_key=${api_key}&photoset_id=${photoset_id}&format=json&jsoncallback=?`;
+    // Documentation: https://www.flickr.com/services/api/flickr.photosets.getPhotos.html
     const url_allphotos = `${api}?method=flickr.photosets.getPhotos&api_key=${api_key}&photoset_id=${photoset_id}&format=json&nojsoncallback=1`;
-
-    // API request URL for all photos in the gallery
-    // https://www.flickr.com/services/api/flickr.photosets.getList.html
-    // https://www.flickr.com/services/rest/?method=flickr.photosets.getList&api_key=7ec3fd13ea8480e8a098bd82a474723a&user_id=8110271%40N05&format=json
-
 
     if (window.innerWidth > 900 ) {
         // Place arrows
@@ -68,7 +58,6 @@
     });
 
     // Navigate through the slides, preloading images along the way
-    // Needs enhancement of keypress
     function navigation(total) {
 
         // Get a list of all elements
@@ -115,13 +104,10 @@
 
             // Count the images already loaded
             let loaded_images = document.getElementsByTagName("img").length;
-            //console.log("There are " + loaded_images + " images loaded");
-            //console.log("Math.floor(total/2): " + Math.floor(total/2));
 
             // If half or more of the images are loaded, show the 'previous' control
-            //if ( (loaded_images > Math.floor(total/2) && -1 === increment) || (1 === increment)) {
             if ( loaded_images < Math.floor(total/2) && -1 === increment ) {
-                //console.log ("Do nothing at all.");
+                // Should this be a return?
             } else {
                 if (loaded_images > Math.floor(total/2)) {
                     document.getElementById("prev").style.display = "block";
@@ -148,16 +134,11 @@
                     requestImage(unloaded_images[0],unloaded_images[1]);
                 }
 
-                // Determine which direction
+                // Determine which direction has been selected
                 let next_active_element_index = active_element_index + increment;
-                //console.log("active_element_index: " + active_element_index);
-                //console.log("next_active_element_index: " + next_active_element_index);
-                //console.log("total: " + total);
-                //console.log("=============================");
 
                 // Going forward from the last slide, move to the first slide
                 if (next_active_element_index === total) {
-                    //console.log("You've hit the last slide!");
                     active_element_index = total - 1;
                     next_active_element_index = 0;
                 }
@@ -165,7 +146,6 @@
                 // Going back from the first slide, move to the last slide
                 // If "previous" is clicked on the first slide, show the last slide
                 if(active_element_index === 0 && increment === -1 ) {
-                    //console.log("4. This is the first slide.");
                     next_active_element_index = (elements.length - 1);
                 }
 
@@ -199,7 +179,7 @@
                 handleData(photosArray);
             })
             .catch(error => {
-                //console.warn(error);
+                console.warn(error);
             });
 
     }
@@ -227,7 +207,7 @@
                 }
 
                 // Find the closest value in the array to the viewport's width.
-                // This will determine which image size we request.
+                // This will determine which image size is requested.
                 const output = sizes_array.reduce(
                     (prev, curr) => Math.abs(curr - viewport_width) < Math.abs(prev - viewport_width) ? curr : prev
                 );
@@ -248,7 +228,7 @@
                 document.getElementById(id).append(img);
             })
             .catch(error => {
-                //console.warn(error);
+                console.warn(error);
             });
     }
 
