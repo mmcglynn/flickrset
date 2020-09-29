@@ -46,11 +46,11 @@ figure img {
 figcaption {
     position: fixed;
     width: 100%;
-    bottom: 1rem;
+    bottom: 0;
     text-align: center;
 }
 figcaption div {
-    color: #777777;
+    color: #f0f0f0f0;
     display: inline-block;
     background-color: rgba(25,25,25,0.5);
     border-radius: 6px;
@@ -60,7 +60,7 @@ figcaption div {
 header {
     display: flex;
     align-items: center;
-    background: linear-gradient(180deg, rgba(100,100,100,1) 0%, rgba(0,0,0,1) 100%);
+    background: linear-gradient(180deg, rgba(80,80,80,1) 0%, rgba(0,0,0,1) 100%);
 }
 header h1 {
     font-family: Cutive, Georgia, serif;
@@ -156,6 +156,9 @@ section article main a {
     font-weight: 700;
     font-size: 130%;
 }
+section article main p, section article footer {
+    font-size: .875em;
+}
 section article main p {
     color: #666666;
     margin: .75em 0;
@@ -173,7 +176,6 @@ section article footer {
     figcaption {
         font-size: 1rem;
         padding: .5rem;
-        bottom: 2em;
     }
     figure {
         text-align: center;
@@ -197,7 +199,6 @@ section article footer {
     header div a {
         display: block;
         padding: .75rem 1.25em .75rem 1.25rem;
-        border-radius: 10px;
     }
     header div a span {
         display: inline;
