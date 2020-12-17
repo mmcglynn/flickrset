@@ -67,7 +67,7 @@ header h1 {
     font-weight: 400;
     text-shadow: 1px 2px 1px black;
     margin: 0;
-    padding: .875em 0 .75em 1em;
+    padding: .75em 0 .5em 1em;
     line-height: 1.25em;
     color: #CCCCCC;
     font-size: 1rem;
@@ -75,16 +75,12 @@ header h1 {
 }
 header div a {
     color: #CCCCCC;
-    background-color: rgba(100,100,100,0.5);
     font-size: 80%;
     text-transform: uppercase;
     text-decoration: none;
-    display: block;
-    padding: 1rem 1.25em 1rem 1.25rem;
 }
 header div a:hover {
     color: #aaaaaa;
-    background-color: #000000;
 }
 header div a span {
     display: none;
@@ -107,10 +103,9 @@ nav a {
     width: 5rem;
     height: 5rem;
     z-index: 1;
-    background-color: rgba(100,100,100,0.5);
 }
 nav a:hover {
-    background-color: rgba(50,50,50,0.25);
+    background-color: rgba(100,100,100,0.5);
 }
 nav a svg {
     margin: .75em;
@@ -195,10 +190,6 @@ section article footer {
     }
     header div {
         margin-right: 1rem;
-    }
-    header div a {
-        display: block;
-        padding: .75rem 1.25em .75rem 1.25rem;
     }
     header div a span {
         display: inline;
