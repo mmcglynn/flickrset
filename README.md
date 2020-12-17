@@ -17,3 +17,5 @@ The application is written in pure Javascript with now external library dependen
 
 - Add touch capability for swiping to advancing slides
 - Better support of screen rotation
+
+.
