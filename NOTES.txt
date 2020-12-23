@@ -1,0 +1,3 @@
+NOTES.txt
+
+- Make sure to try Object.keys(obj) to get the keys of an object
