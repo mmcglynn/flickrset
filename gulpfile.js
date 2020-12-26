@@ -1,4 +1,4 @@
-const {src, dest, watch } = require('gulp');
+const  {src, dest, watch } = require('gulp');
 const minifyCSS =  require('gulp-clean-css');
 
 const bundleCSS = () => {
