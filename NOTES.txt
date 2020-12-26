@@ -1,3 +1,4 @@
 NOTES.txt
 
 - Make sure to try Object.keys(obj) to get the keys of an object
+- Deal with the API key. It should not be in the codebase
