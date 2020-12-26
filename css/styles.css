@@ -50,7 +50,7 @@ figcaption {
     text-align: center;
 }
 figcaption div {
-    color: #f0f0f0f0;
+    color: #f0f0f0;
     display: inline-block;
     background-color: rgba(25,25,25,0.5);
     border-radius: 6px;
@@ -121,46 +121,51 @@ nav a#prev {
     display: none;
 }
 
+/* Added classes and IDs */
+#gallery-all {
+    display: none;
+}
+
 /* Index page */
-section {
+#gallery-index {
     display: flex;
     flex-wrap: wrap;
     padding: .5rem;
 }
-section article {
+#gallery-index article {
     background-color: var(--article-background-color);
     flex-grow: 1;
     flex-basis: 14rem;
     min-height: 8rem;
     margin: .75rem;
 }
-section article header {
+#gallery-index article header {
     background-size: cover;
     padding: 0;
 }
-section article header a {
+#gallery-index article header a {
     padding: 30%;
     width: 100%;
     display: block;
     text-indent: -200em;
 }
-section article main {
+#gallery-index article section {
     margin: .75em;
 }
-section article main a {
+#gallery-index article section a {
     font-weight: 700;
     font-size: 130%;
 }
-section article main p, section article footer {
+#gallery-index article section p, #gallery-index article footer {
     font-size: .875em;
 }
-section article main p {
+#gallery-index article section p {
     color: #666666;
     margin: .75em 0;
 }
-section article footer {
+#gallery-index article footer {
     color: #999999;
-    font-size: 90%;
+    margin: 0 .75em;
 }
 
 /* Desktop */
