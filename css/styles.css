@@ -1,28 +1,37 @@
 :root {
-    --link-color: #333333;
-    --article-background-color: #EEEEEE;
-    --body-background-color: #000000;
-    --header-background-color: #f1f1f1;
-    /*--body-background-color: #222;*/
-    /*--header-background-color: #111;*/
+    --link-color: red;
+    --light-background-color: #FFFFFF;
+    --med-background-color: #CCCCCC;
+    --dark-background-color: #000000;
+    --light-text-color: #BBBBBB;
+    --med-text-color: #999999;
+    --dark-text-color: #555555;
+    --accent-color: #6db0e3;
+    --dark-accent-color: #4e92c2;
+}
+@font-face {
+    font-family: "Oleo";
+    src: url("../font/OleoScript-Regular.ttf");
+}
+@font-face {
+    font-family: "Pontano";
+    src: url("../font/PontanoSans-Regular.ttf");
 }
 a {
-    color: var(--link-color);
-}
-a:hover {
+    color: var(--accent-color);
     text-decoration: none;
 }
 body {
     margin: 0;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    background-color: var(--body-background-color);
+    font-family: Pontano, Helvetica, Arial, sans-serif;
+    background-color: var(--light-background-color);
 }
 @keyframes fade-slide {
     0% {
         opacity: 0;
     }
     100% {
-        opacity: 100%;
+        opacity: 1;
     }
 }
 figure {
@@ -63,14 +72,14 @@ header {
     background: linear-gradient(180deg, rgba(80,80,80,1) 0%, rgba(0,0,0,1) 100%);
 }
 header h1 {
-    font-family: Cutive, Georgia, serif;
+    color: var(--accent-color);
+    font-family: Oleo, Georgia, serif;
     font-weight: 400;
     text-shadow: 1px 2px 1px black;
     margin: 0;
-    padding: .75em 0 .5em 1em;
+    padding: .75em 0 .5em .75em;
     line-height: 1.25em;
-    color: #CCCCCC;
-    font-size: 1rem;
+    font-size: .875rem;
     flex-grow: 1;
 }
 header div a {
@@ -80,7 +89,6 @@ header div a {
     text-decoration: none;
 }
 header div a:hover {
-    color: #aaaaaa;
 }
 header div a span {
     display: none;
@@ -133,14 +141,23 @@ nav a#prev {
     padding: .5rem;
 }
 #gallery-index article {
-    background-color: var(--article-background-color);
+    background-image: linear-gradient(#e1e1e1, #FFFFFF);
+    border: 1px solid #DDDDDD;
+    box-shadow: 0 0 12px #d1d1d1;
     flex-grow: 1;
     flex-basis: 14rem;
     min-height: 8rem;
     margin: .75rem;
+    position: relative;
+}
+#gallery-index article h3 {
+    color: var(--dark-text-color);
+    margin: .75em 0;
+    text-align: center;
 }
 #gallery-index article header {
     background-size: cover;
+    background: var(--med-background-color);
     padding: 0;
 }
 #gallery-index article header a {
@@ -149,23 +166,54 @@ nav a#prev {
     display: block;
     text-indent: -200em;
 }
+#gallery-index article header a:hover {
+    background-color: #eeeeee;
+    opacity: .5;
+}
 #gallery-index article section {
-    margin: .75em;
+    margin: .75em .75em 2.5em .75em ;
 }
 #gallery-index article section a {
-    font-weight: 700;
-    font-size: 130%;
-}
-#gallery-index article section p, #gallery-index article footer {
+    display: table;
+    margin: 0 auto;
+    background-color: var(--accent-color);
+    color: #ffffff;
+    padding: .5em 1em;
+    border-radius: .5em;
     font-size: .875em;
+    font-weight: 400;
+    text-transform: uppercase;
+    text-align: center;
+    text-shadow: 1px 1px var(--dark-accent-color);
+}
+#gallery-index article section a:hover {
+    background-color: var(--med-background-color);
+    text-shadow: none;
 }
 #gallery-index article section p {
-    color: #666666;
-    margin: .75em 0;
+    color: var(--dark-text-color);
+    font-size: 1em;
+    margin-top: 0;
+    text-shadow: 1px 1px white;
 }
 #gallery-index article footer {
-    color: #999999;
-    margin: 0 .75em;
+    display:flex;
+    width:100%;
+    position:absolute;
+    bottom:0;
+    background-color: white;
+}
+#gallery-index article footer p {
+    color:var(--med-text-color);
+    font-size:.875em;
+    flex:1 1 0px;
+    text-align:center;
+    margin: 0;
+    line-height: 2em;
+    border-top:1px solid #ddd
+}
+#gallery-index article footer p:first-child {
+    border-right: 1px solid #DDDDDD;
 }
 
 /* Desktop */
@@ -191,7 +239,7 @@ nav a#prev {
         height: auto;
     }
     header h1 {
-        font-size: 1.5rem;
+        font-size: 2.5rem;
     }
     header div {
         margin-right: 1rem;
