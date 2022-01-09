@@ -9,6 +9,11 @@
     --accent-color: #6db0e3;
     --dark-accent-color: #4e92c2;
 }
+html {
+    font-size: 100%;
+}
+
+/* Fonts -------------------------------- */
 @font-face {
     font-family: "Oleo";
     src: url("../font/OleoScript-Regular.ttf");
@@ -17,6 +22,8 @@
     font-family: "Pontano";
     src: url("../font/PontanoSans-Regular.ttf");
 }
+
+/* HTNL tags ---------------------------- */
 a {
     color: var(--accent-color);
     text-decoration: none;
@@ -25,14 +32,6 @@ body {
     margin: 0;
     font-family: Pontano, Helvetica, Arial, sans-serif;
     background-color: var(--light-background-color);
-}
-@keyframes fade-slide {
-    0% {
-        opacity: 0;
-    }
-    100% {
-        opacity: 1;
-    }
 }
 figure {
     margin: 0;
@@ -51,7 +50,6 @@ figure.active {
 figure img {
     width: 100%;
 }
-
 figcaption {
     position: fixed;
     width: 100%;
@@ -65,39 +63,49 @@ figcaption div {
     border-radius: 6px;
     padding: 4px 10px 5px;
 }
-
-header {
+footer#pagefooter {
+    color: white;
+    background-color: #222;
+    border-top: 1px solid #555;
+    height: 3em;
+    display: flex;
+    flex-flow: row;
+    order: 1;
+    justify-content: space-between;
+}
+footer#pagefooter h3 {
+    margin: .625em 0 0 .5em;
+}
+footer#pagefooter p {
+    margin: auto 1em;
+}
+header#indexheader {
     display: flex;
     align-items: center;
     background: linear-gradient(180deg, rgba(80,80,80,1) 0%, rgba(0,0,0,1) 100%);
 }
-header h1 {
+header#indexheader h1 {
     color: var(--accent-color);
     font-family: Oleo, Georgia, serif;
     font-weight: 400;
     text-shadow: 1px 2px 1px black;
     margin: 0;
-    padding: .75em 0 .5em .75em;
+    padding: .5em 0 .5em .75em;
     line-height: 1.25em;
     font-size: .875rem;
     flex-grow: 1;
 }
-header div a {
+header#indexheader div a {
     color: #CCCCCC;
     font-size: 80%;
     text-transform: uppercase;
     text-decoration: none;
 }
-header div a:hover {
+header#indexheader div a:hover {
 }
-header div a span {
+header#indexheader div a span {
     display: none;
 }
-
-html {
-    font-size: 100%;
-}
-
 /* Arrow navigation */
 nav {
     overflow: hidden;
@@ -126,21 +134,42 @@ nav a#next {
 }
 nav a#prev {
     float: left;
-    display: none;
 }
 
-/* Added classes and IDs */
-#gallery-all {
-    display: none;
+/* Animations --------------------------- */
+@keyframes fade-slide {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Added classes and IDs ---------------- */
+/* Gallery page */
+#gallery section {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+#gallery section div {
+    background-color: orange;
+    margin: 0;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position-x: 50%;
+    flex: 1;
+    text-indent: -99em;
 }
 
 /* Index page */
-#gallery-index {
+#gallery-index section {
     display: flex;
     flex-wrap: wrap;
     padding: .5rem;
 }
-#gallery-index article {
+#gallery-index section article {
     background-image: linear-gradient(#e1e1e1, #FFFFFF);
     border: 1px solid #DDDDDD;
     box-shadow: 0 0 12px #d1d1d1;
@@ -150,60 +179,62 @@ nav a#prev {
     margin: .75rem;
     position: relative;
 }
-#gallery-index article h3 {
+#gallery-index section article h3 {
     color: var(--dark-text-color);
     margin: .75em 0;
     text-align: center;
+    font-size: 120%;
 }
-#gallery-index article header {
+#gallery-index section article header {
     background-size: cover;
-    background: var(--med-background-color);
+    background-color: var(--med-background-color);
     padding: 0;
 }
-#gallery-index article header a {
+#gallery-index section article header a {
     padding: 30%;
     width: 100%;
     display: block;
     text-indent: -200em;
 }
-#gallery-index article header a:hover {
+#gallery-index section article header a:hover {
     background-color: #eeeeee;
     opacity: .5;
 }
-#gallery-index article section {
+#gallery-index section article div {
     margin: .75em .75em 2.5em .75em ;
 }
-#gallery-index article section a {
+#gallery-index section article div a {
     display: table;
     margin: 0 auto;
     background-color: var(--accent-color);
     color: #ffffff;
-    padding: .5em 1em;
+    padding: .5375em 1em .5em 1em;
     border-radius: .5em;
     font-size: .875em;
     font-weight: 400;
     text-transform: uppercase;
     text-align: center;
     text-shadow: 1px 1px var(--dark-accent-color);
+    cursor: pointer;
 }
-#gallery-index article section a:hover {
+#gallery-index section article div a:hover {
     background-color: var(--med-background-color);
     text-shadow: none;
 }
-#gallery-index article section p {
+#gallery-index section article div p {
     color: var(--dark-text-color);
     font-size: 1em;
     margin-top: 0;
     text-shadow: 1px 1px white;
 }
-#gallery-index article footer {
+#gallery-index section article footer {
     display:flex;
     width:100%;
     position:absolute;
     bottom:0;
     background-color: white;
 }
-#gallery-index article footer p {
+#gallery-index section article footer p {
     color:var(--med-text-color);
     font-size:.875em;
     flex:1 1 0px;
@@ -212,10 +243,14 @@ nav a#prev {
     line-height: 2em;
     border-top:1px solid #ddd
 }
-#gallery-index article footer p:first-child {
+#gallery-index section article footer p:first-child {
     border-right: 1px solid #DDDDDD;
 }
+.hide {
+    display: none;
+}
 
+/* Media queries ------------------------ */
 /* Desktop */
 @media only screen and (min-width: 900px) {
     body > div {
@@ -232,19 +267,19 @@ nav a#prev {
         width: auto;
         height: 99%;
     }
-    #gallery {
-        margin: 0;
-    }
-    header {
+    /*#gallery {*/
+    /*    margin: 0;*/
+    /*}*/
+    header#indexheader {
         height: auto;
     }
-    header h1 {
+    header#indexheader h1 {
         font-size: 2.5rem;
     }
-    header div {
+    header#indexheader div {
         margin-right: 1rem;
     }
-    header div a span {
+    header#indexheader div a span {
         display: inline;
     }
     nav {
