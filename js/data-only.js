@@ -97,30 +97,26 @@ const UIToggle = () => {
     // Index panel
     const galleryindex = document.getElementById('gallery-index');
     if (galleryindex.classList.length > 0) {
-        // Show the index and clear the gallery
+        // Show the index panel
         galleryindex.classList.remove('hide');
+        // Remove all slides from the gallery section
         document.querySelectorAll('#gallery section div').forEach(element => {
             element.remove();
         });
+        // Reset the gallery footer
     } else {
         galleryindex.classList.add('hide');
     }
 
     // Gallery panel
     const gallery = document.getElementById('gallery');
-    if (gallery.classList.length > 0) {
-        // Show the gallery
-        gallery.classList.remove('hide');
-    } else {
-        gallery.classList.add('hide');
-    }
+    gallery.classList.toggle('hide', false);
+
 };
 
 // Move slides in the specified direction
 const UIChangeSlide = (direction) => {
   'use strict';
-    //const direction = parseInt(d);
-    console.log('direction: ' + direction);
 
     const slides = document.querySelectorAll('#gallery section div');
 
@@ -134,6 +130,7 @@ const UIChangeSlide = (direction) => {
         }
     });
 
+    // Forward or back based on which buttton clicked
     nextindex = currentindex + direction;
 
     // Reached the end
@@ -146,37 +143,49 @@ const UIChangeSlide = (direction) => {
          nextindex = (slidecount - 1);
     }
 
-    console.log('currentindex: ' + currentindex);
-    console.log('nextindex: ' + (currentindex + direction));
-
+     // Hide the current slide - what about these variable name? Counterintuitive
     const nextslide = document.querySelector('[data-order="' + currentindex + '"]');
     nextslide.classList.add('hide');
-
+    // Show the next slide
     const prevslide = document.querySelector('[data-order="' + nextindex + '"]');
     prevslide.classList.remove('hide');
 
+    // Update the display information in the footer
+    UIUpdateFooter(prevslide);
+};
+
+// Need comment
+const UIUpdateFooter = (slide) => {
+  'use strict';
+    let title = document.getElementById('slidetitle');
+    let count = document.getElementById('slidecount');
+
+    title.innerText = slide.title;
+    count.innerText = parseInt(slide.dataset.order) + 1;
+
+    //console.log(slide.title);
+    //console.log(parseInt(slide.dataset.order) + 1);
 };
 
 // Build the initial markup
 (function(){
     'use strict';
 
+    /* Landing section that contains the gallery cards */
     const galleryindex = document.getElementById('gallery-index');
-    const gallery = document.getElementById('gallery');
-
+    const landingSection = document.createElement('section');
     // header
     const h1 = document.createElement('h1');
     h1.innerText = 'flickr galleries';
     const header = document.createElement('header');
     header.id = 'indexheader';
     header.append(h1);
+    // Assemble
+    galleryindex.append(header,landingSection);
 
-    // Landing section that contains the gallery cards
-    const landingSection = document.createElement('section');
-
-    // Gallery section for the individual gallery
+    /* Gallery section for the individual gallery */
+    const gallery = document.getElementById('gallery');
     const gallerySection = document.createElement('section');
-
     // footer
     const footer = document.createElement('footer');
     footer.id = 'pagefooter';
@@ -194,21 +203,23 @@ const UIChangeSlide = (direction) => {
     allgalleries.append(a);
     footer.append(h3,slidetitle,slidecount,allgalleries);
     gallerySection.append(footer);
-
     // Assemble
-    galleryindex.append(header,landingSection);
     gallery.append(buildNavigation(),gallerySection);
+
+    if (window.innerWidth > 900 ) {
+        // Place arrows
+        placeArrows(window.innerHeight);
+
+        // Adjust placement on window resize
+        window.addEventListener('resize', () => {
+            placeArrows(window.innerHeight);
+        });
+    }
 
 })();
 
-const populateFooter = (id) => {
-    'use strict';
-    const slide = document.getElementById(id);
-    document.getElementById('slidetitle').innerText = slide.tabIndex;
-    document.getElementById('slidecount').innerText = slide.dataset + ' of';
-};
+/* Helper functions */
 
-// Helper functions --------------------
 // Format the date as supplied by flickr
 const convert_date = unix_timestamp => {
     'use strict';
@@ -263,6 +274,17 @@ function buildNavigation() {
     return nav;
 }
 
+// Place arrows based on window size
+function placeArrows(h) {
+    'use strict';
+    let controloffset = document.getElementById("next").offsetHeight;
+    let arrowposition = Math.floor(((h - controloffset) / 2)) + "px";
+    let nav = document.getElementsByTagName("nav");
+    nav[0].style.top = arrowposition;
+}
+
+/* flickr api request functions */
+
 // Get all photosets
 async function getAllPhotoSets() {
     'use strict';
@@ -312,7 +334,9 @@ function getAllPhotoSetPhotos(id) {
             for (let photoset of data.photoset.photo) {
                 buildSlides(photoset.id,photoset.title, i);
                 i++;
+                //console.log(i);
             }
+            console.log(i);
 
             //let firstslideid = document.querySelector('[data-order="0"]').id;
             //console.log(document.querySelectorAll('#gallery section div'));
