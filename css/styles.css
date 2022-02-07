@@ -74,10 +74,12 @@ footer#pagefooter {
     justify-content: space-between;
 }
 footer#pagefooter h3 {
-    margin: .625em 0 0 .5em;
+    /* Margin needs to be on container */
+    /*margin: .625em 0 0 .5em;*/
 }
 footer#pagefooter p {
-    margin: auto 1em;
+    /* Margin needs to be on container */
+    /* margin: auto 1em; */
 }
 header#indexheader {
     display: flex;
@@ -154,7 +156,7 @@ nav a#prev {
     flex-direction: column;
 }
 #gallery section div {
-    background-color: orange;
+    background-color: #000000;
     margin: 0;
     background-repeat: no-repeat;
     background-size: contain;
@@ -287,7 +289,7 @@ nav a#prev {
         position: absolute;
         z-index: 100;
         width: 100%;
-        bottom: auto;
+        bottom: calc((100% - 2.5em)/2);
     }
     nav a {
         width: 2.5rem;

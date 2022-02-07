@@ -96,15 +96,18 @@ const UIToggle = () => {
 
     // Index panel
     const galleryindex = document.getElementById('gallery-index');
+
+    // If the index is hidden, show it
     if (galleryindex.classList.length > 0) {
-        // Show the index panel
         galleryindex.classList.remove('hide');
         // Remove all slides from the gallery section
         document.querySelectorAll('#gallery section div').forEach(element => {
             element.remove();
         });
-        // Reset the gallery footer
+        // Clear footer
+        UIUpdateFooter();
     } else {
+        // Hide the index
         galleryindex.classList.add('hide');
     }
 
@@ -119,9 +122,7 @@ const UIChangeSlide = (direction) => {
   'use strict';
 
     const slides = document.querySelectorAll('#gallery section div');
-
     const slidecount = slides.length;
-
     let currentindex, nextindex;
 
     slides.forEach(slide => {
@@ -143,7 +144,8 @@ const UIChangeSlide = (direction) => {
          nextindex = (slidecount - 1);
     }
 
-     // Hide the current slide - what about these variable name? Counterintuitive
+     // Hide the current slide
+    // TODO: What about these counterintuitive variable names?
     const nextslide = document.querySelector('[data-order="' + currentindex + '"]');
     nextslide.classList.add('hide');
     // Show the next slide
@@ -154,42 +156,54 @@ const UIChangeSlide = (direction) => {
     UIUpdateFooter(prevslide);
 };
 
-// Need comment
+// Update the markup in the footer
 const UIUpdateFooter = (slide) => {
-  'use strict';
-    let title = document.getElementById('slidetitle');
-    let count = document.getElementById('slidecount');
+    'use strict';
 
-    title.innerText = slide.title;
-    count.innerText = parseInt(slide.dataset.order) + 1;
+    const title = document.getElementById('slidetitle');
+    const count = document.getElementById('slidecount');
 
-    //console.log(slide.title);
-    //console.log(parseInt(slide.dataset.order) + 1);
+    // Reset values when function called with no parameter
+    if(slide === undefined) {
+        title.innerText = count.innerText = '';
+        //console.log('footer cleared');
+    } else {
+        //console.log(slide.attributes);
+        title.innerText = slide.title;
+        count.innerText = parseInt(slide.dataset.order) + 1;
+    }
 };
 
 // Build the initial markup
 (function(){
     'use strict';
 
-    /* Landing section that contains the gallery cards */
+    /* LANDING section that contains the gallery cards */
     const galleryindex = document.getElementById('gallery-index');
+
+    // section
     const landingSection = document.createElement('section');
+
     // header
     const h1 = document.createElement('h1');
     h1.innerText = 'flickr galleries';
     const header = document.createElement('header');
     header.id = 'indexheader';
     header.append(h1);
-    // Assemble
+
+    // assemble landing
     galleryindex.append(header,landingSection);
 
-    /* Gallery section for the individual gallery */
+    /* GALLERY section for the individual gallery */
     const gallery = document.getElementById('gallery');
+
+    // section
     const gallerySection = document.createElement('section');
-    // footer
-    const footer = document.createElement('footer');
-    footer.id = 'pagefooter';
+
+    // header
     const h3 = document.createElement('h3');
+
+    // paragraphs
     const slidetitle = document.createElement('p');
     slidetitle.id = 'slidetitle';
     const slidecount = document.createElement('p');
@@ -201,20 +215,76 @@ const UIUpdateFooter = (slide) => {
     const allgalleries = document.createElement('p');
     allgalleries.id = 'allgalleries';
     allgalleries.append(a);
+
+    // footer
+    const footer = document.createElement('footer');
+    footer.id = 'pagefooter';
+
+    // assemble footer
     footer.append(h3,slidetitle,slidecount,allgalleries);
-    gallerySection.append(footer);
-    // Assemble
-    gallery.append(buildNavigation(),gallerySection);
 
-    if (window.innerWidth > 900 ) {
-        // Place arrows
-        placeArrows(window.innerHeight);
+    // previous link
+    const prev_title = document.createElement('title');
+    prev_title.innerText = 'Previous';
+    const prev_path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    prev_path.setAttribute('d','M6.293 13.707l-5-5c-0.391-0.39-0.391-1.024 0-1.414l5-5c0.391-0.391 1.024-0.391 1.414 0s0.391 1.024 0 1.414l-3.293 3.293h9.586c0.552 0 1 0.448 1 1s-0.448 1-1 1h-9.586l3.293 3.293c0.195 0.195 0.293 0.451 0.293 0.707s-0.098 0.512-0.293 0.707c-0.391 0.391-1.024 0.391-1.414 0z');
+    prev_path.classList.add('fill');
+    const prev_svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    prev_svg.setAttribute('viewBox','0 0 16 16');
+    const prev_a = document.createElement('a');
+    prev_a.href = '#';
+    prev_a.id = 'prev';
 
-        // Adjust placement on window resize
-        window.addEventListener('resize', () => {
-            placeArrows(window.innerHeight);
-        });
-    }
+    // assemble previous link
+    prev_svg.append(prev_path,prev_title);
+    prev_a.append(prev_svg);
+    prev_a.addEventListener('click', (e) => {
+        UIChangeSlide(-1);
+    });
+
+    // next link
+    const next_title = document.createElement('title');
+    next_title.innerText = 'Next';
+    const next_path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    next_path.classList.add('fill');
+    next_path.setAttribute('d','M9.707 13.707l5-5c0.391-0.39 0.391-1.024 0-1.414l-5-5c-0.391-0.391-1.024-0.391-1.414 0s-0.391 1.024 0 1.414l3.293 3.293h-9.586c-0.552 0-1 0.448-1 1s0.448 1 1 1h9.586l-3.293 3.293c-0.195 0.195-0.293 0.451-0.293 0.707s0.098 0.512 0.293 0.707c0.391 0.391 1.024 0.391 1.414 0z');
+    const next_svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    next_svg.setAttribute('viewBox','0 0 16 16');
+    const next_a = document.createElement('a');
+    next_a.href = '#';
+    next_a.id = 'next';
+
+    // assemble links
+    next_svg.append(next_path,next_title);
+    next_a.append(next_svg);
+    next_a.addEventListener('click', (e) => {
+        UIChangeSlide(1);
+    });
+
+    // navigation
+    const nav = document.createElement('nav');
+
+    // assemble navigation
+    nav.append(prev_a,next_a);
+
+    // assemble section
+    gallerySection.append(nav,footer);
+
+    // assemble gallery
+    gallery.append(gallerySection);
+
+    // We would rather not need this
+    // if (window.innerWidth > 900 ) {
+    //     let sectionHeight = document.querySelector('#gallery-index section').clientHeight;
+    //     console.log(sectionHeight);
+    //     // Place arrows
+    //     placeArrows(sectionHeight);
+    //
+    //     // Adjust placement on window resize
+    //     window.addEventListener('resize', () => {
+    //         placeArrows(sectionHeight);
+    //     });
+    // }
 
 })();
 
@@ -227,61 +297,6 @@ const convert_date = unix_timestamp => {
     const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
     return months[date.getMonth()] + " " + date.getFullYear();
 };
-
-// Build the arrow navigation
-function buildNavigation() {
-    'use strict';
-
-    // Previous link
-    const prev_title = document.createElement('title');
-    prev_title.innerText = 'Previous';
-    const prev_path = document.createElementNS('http://www.w3.org/2000/svg','path');
-    prev_path.setAttribute('d','M6.293 13.707l-5-5c-0.391-0.39-0.391-1.024 0-1.414l5-5c0.391-0.391 1.024-0.391 1.414 0s0.391 1.024 0 1.414l-3.293 3.293h9.586c0.552 0 1 0.448 1 1s-0.448 1-1 1h-9.586l3.293 3.293c0.195 0.195 0.293 0.451 0.293 0.707s-0.098 0.512-0.293 0.707c-0.391 0.391-1.024 0.391-1.414 0z');
-    prev_path.classList.add('fill');
-    const prev_svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    prev_svg.setAttribute('viewBox','0 0 16 16');
-    const prev_a = document.createElement('a');
-    prev_a.href = '#';
-    prev_a.id = 'prev';
-    // Assemble
-    prev_svg.append(prev_path,prev_title);
-    prev_a.append(prev_svg);
-    prev_a.addEventListener('click', (e) => {
-        UIChangeSlide(-1);
-    });
-
-    // Next link
-    const next_title = document.createElement('title');
-    next_title.innerText = 'Next';
-    const next_path = document.createElementNS('http://www.w3.org/2000/svg','path');
-    next_path.classList.add('fill');
-    next_path.setAttribute('d','M9.707 13.707l5-5c0.391-0.39 0.391-1.024 0-1.414l-5-5c-0.391-0.391-1.024-0.391-1.414 0s-0.391 1.024 0 1.414l3.293 3.293h-9.586c-0.552 0-1 0.448-1 1s0.448 1 1 1h9.586l-3.293 3.293c-0.195 0.195-0.293 0.451-0.293 0.707s0.098 0.512 0.293 0.707c0.391 0.391 1.024 0.391 1.414 0z');
-    const next_svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    next_svg.setAttribute('viewBox','0 0 16 16');
-    const next_a = document.createElement('a');
-    next_a.href = '#';
-    next_a.id = 'next';
-    // Assemble
-    next_svg.append(next_path,next_title);
-    next_a.append(next_svg);
-    next_a.addEventListener('click', (e) => {
-        UIChangeSlide(1);
-    });
-
-    const nav = document.createElement('nav');
-    nav.append(prev_a,next_a);
-
-    return nav;
-}
-
-// Place arrows based on window size
-function placeArrows(h) {
-    'use strict';
-    let controloffset = document.getElementById("next").offsetHeight;
-    let arrowposition = Math.floor(((h - controloffset) / 2)) + "px";
-    let nav = document.getElementsByTagName("nav");
-    nav[0].style.top = arrowposition;
-}
 
 /* flickr api request functions */
 
@@ -328,6 +343,9 @@ function getAllPhotoSetPhotos(id) {
             // Add the gallery name to the footer
             document.querySelector('#pagefooter h3').innerText = data.photoset.title;
 
+            // TODO Add the first slide's footer information as well as the total
+            // Should this be part of buildSlides?
+
             // Pass the photos to the UI function
             // Could this loop be done better?
             let i = 0;
@@ -336,11 +354,6 @@ function getAllPhotoSetPhotos(id) {
                 i++;
                 //console.log(i);
             }
-            console.log(i);
-
-            //let firstslideid = document.querySelector('[data-order="0"]').id;
-            //console.log(document.querySelectorAll('#gallery section div'));
-            //populateFooter(firstslideid);
 
         })
         .catch(err => {
@@ -409,10 +422,10 @@ function buildSlides(id, title, order) {
         })
         .finally (() => {
             // Reorder the slides
-            let divs = document.querySelectorAll('#gallery section div');
+            const slides = document.querySelectorAll('#gallery section div');
             let gallery = document.querySelector('#gallery section');
             // Add the DOM notes to the array
-            let nodeArr = Array.from(divs);
+            let nodeArr = Array.from(slides);
             // Reorder the nodes based on the data order.
             // This solves the problem where the images are populated asynchronously,
             // thus displaying the images out of order and randomly so.
