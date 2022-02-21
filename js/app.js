@@ -8,7 +8,9 @@ const Config = {
     api: "https://api.flickr.com/services/rest/",
 
     // Provide the API key
-    api_key: "7ec3fd13ea8480e8a098bd82a474723a",
+    api_key: "",
+
+    title: 'mike\'s flickr galleries',
 
     // API request URL for all photosets by user
     // https://www.flickr.com/services/api/flickr.photosets.getList.html
@@ -182,7 +184,7 @@ const UIUpdateFooter = (slide) => {
 
     // header
     const h1 = document.createElement('h1');
-    h1.innerText = 'flickr galleries';
+    h1.innerText = Config.title;
     const header = document.createElement('header');
     header.id = 'indexheader';
     header.append(h1);
@@ -214,7 +216,7 @@ const UIUpdateFooter = (slide) => {
 
     const a = document.createElement('a');
     a.href = '#';
-    a.innerText = 'All Galleries';
+    a.innerText = 'BACK TO LIST';
     a.addEventListener('click', UIToggle);
 
     const allgalleries = document.createElement('p');
@@ -286,6 +288,25 @@ const UIUpdateFooter = (slide) => {
     //     });
     // }
 
+    // Handle the arrow keys on the keyboard
+    document.addEventListener('keydown', logKey);
+    let val = 0;
+    function logKey(e) {
+        switch(e.code) {
+            case "ArrowRight":
+                val = 1;
+                break;
+            case "ArrowLeft":
+                val = -1;
+                break;
+            default:
+                val = 0;
+        }
+        if(Math.abs(val) === 1) {
+            UIChangeSlide(val);
+        }
+    }
+
 })();
 
 /* Helper functions */
@@ -303,8 +324,8 @@ const convert_date = unix_timestamp => {
 // Get all photosets
 async function getAllPhotoSets() {
     'use strict';
-    const response = await fetch(Config.static_allPhotosets);
-    //const response = await fetch(Config.allPhotoSets());
+    //const response = await fetch(Config.static_allPhotosets);
+    const response = await fetch(Config.allPhotoSets());
     return await response.json();
 }
 getAllPhotoSets().catch(err => {
